@@ -1,0 +1,162 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">15dp</dimen>
+    <dimen name="activity_vertical_margin">15dp</dimen>
+
+    <!-- activity标题栏高度 -->
+    <dimen name="activity_actionbarHight">72dp</dimen>
+    <!-- tab高度 -->
+    <dimen name="activity_tabHight">36dp</dimen>
+    <!-- 筛选栏高度 -->
+    <dimen name="activity_orderHight">40dp</dimen>
+    <!-- 标题栏按钮高度 -->
+    <dimen name="activity_btnHight">30dp</dimen>
+    <!-- 底部按钮高度 -->
+    <dimen name="bottom_btnHight">40dp</dimen>
+    <!-- 其他按钮高度 -->
+    <dimen name="other_btnHight">30dp</dimen>
+
+    <!-- activity标题字体 -->
+    <dimen name="activity_title">19dp</dimen>
+    <!-- 文本标题字体 -->
+    <dimen name="activity_titletext">18dp</dimen>
+
+    <!-- 文本内容字体 (系统简介内容的文字大小)-->
+    <dimen name="activity_textSize">15dp</dimen>
+    <!-- 详情文本内容字体 -->
+    <dimen name="info_textSize">13.5dp</dimen>
+
+
+    <!-- 业务列表子项标题字体 -->
+    <dimen name="businessItem_title">16.5dp</dimen>
+
+    <dimen name="shadow_width">15dp</dimen>
+    <dimen name="slidingmenu_offset">200dp</dimen>
+
+    <dimen name="login_height">218dp</dimen>
+
+    <!-- 足迹列表小竖线距离左边的距离 -->
+    <dimen name="footitemline_margingleft">7dp</dimen>
+    <!-- 对话框按钮文字大小 -->
+    <dimen name="dialogbuttontext">18dp</dimen>
+    <!-- 列表子项间距 -->
+    <dimen name="listitem_dividerheight">15dp</dimen>
+    <!-- 工单列表子项文字上下间距 -->
+    <dimen name="listitem_txstdividerheight">15dp</dimen>
+    <!-- 工单列表的搜索栏高度 -->
+    <dimen name="searchheight">50dp</dimen>
+    <!-- 自定义界面上面的绿色条纹高度 -->
+    <dimen name="greenlineheight">5dp</dimen>
+
+    <!-- 时间控件的高度 -->
+    <dimen name="datepickerheight">200dp</dimen>
+    <!-- 下拉刷新、上拉加载图标大小 -->
+    <dimen name="refreshload_iconsize">25dp</dimen>
+
+    <dimen name="dp_0">0dp</dimen>
+    <dimen name="dp_0.5">0.5dp</dimen>
+    <dimen name="dp_1">1dp</dimen>
+    <dimen name="dp_2">2dp</dimen>
+    <dimen name="dp_3">3dp</dimen>
+    <dimen name="dp_4">4dp</dimen>
+    <dimen name="dp_5">5dp</dimen>
+    <dimen name="dp_6">6dp</dimen>
+    <dimen name="dp_7">7dp</dimen>
+    <dimen name="dp_8">8dp</dimen>
+    <dimen name="dp_9">9dp</dimen>
+    <dimen name="dp_10">10dp</dimen>
+    <dimen name="dp_11">11dp</dimen>
+    <dimen name="dp_12">12dp</dimen>
+    <dimen name="dp_13">13dp</dimen>
+    <dimen name="dp_14">14dp</dimen>
+    <dimen name="dp_15">15dp</dimen>
+    <dimen name="dp_16">16dp</dimen>
+    <dimen name="dp_17">17dp</dimen>
+    <dimen name="dp_18">18dp</dimen>
+    <dimen name="dp_19">19dp</dimen>
+    <dimen name="dp_20">20dp</dimen>
+    <dimen name="dp_21">21dp</dimen>
+    <dimen name="dp_22">22dp</dimen>
+    <dimen name="dp_23">23dp</dimen>
+    <dimen name="dp_24">24dp</dimen>
+    <dimen name="dp_25">25dp</dimen>
+    <dimen name="dp_26">26dp</dimen>
+    <dimen name="dp_27">27dp</dimen>
+    <dimen name="dp_28">28dp</dimen>
+    <dimen name="dp_29">29dp</dimen>
+    <dimen name="dp_30">30dp</dimen>
+    <dimen name="dp_31">31dp</dimen>
+    <dimen name="dp_32">32dp</dimen>
+    <dimen name="dp_33">33dp</dimen>
+    <dimen name="dp_34">34dp</dimen>
+    <dimen name="dp_35">35dp</dimen>
+    <dimen name="dp_36">36dp</dimen>
+    <dimen name="dp_37">37dp</dimen>
+    <dimen name="dp_38">38dp</dimen>
+    <dimen name="dp_39">39dp</dimen>
+    <dimen name="dp_40">40dp</dimen>
+    <dimen name="dp_41">41dp</dimen>
+    <dimen name="dp_42">42dp</dimen>
+    <dimen name="dp_43">43dp</dimen>
+    <dimen name="dp_44">44dp</dimen>
+    <dimen name="dp_45">45dp</dimen>
+    <dimen name="dp_46">46dp</dimen>
+    <dimen name="dp_47">47dp</dimen>
+    <dimen name="dp_48">48dp</dimen>
+    <dimen name="dp_49">49dp</dimen>
+    <dimen name="dp_50">50dp</dimen>
+    <dimen name="dp_51">51dp</dimen>
+    <dimen name="dp_52">52dp</dimen>
+    <dimen name="dp_53">53dp</dimen>
+    <dimen name="dp_54">54dp</dimen>
+    <dimen name="dp_55">55dp</dimen>
+    <dimen name="dp_56">56dp</dimen>
+    <dimen name="dp_57">57dp</dimen>
+    <dimen name="dp_58">58dp</dimen>
+    <dimen name="dp_59">59dp</dimen>
+    <dimen name="dp_60">60dp</dimen>
+    <dimen name="dp_61">61dp</dimen>
+    <dimen name="dp_62">62dp</dimen>
+    <dimen name="dp_63">63dp</dimen>
+    <dimen name="dp_64">64dp</dimen>
+    <dimen name="dp_65">65dp</dimen>
+    <dimen name="dp_66">66dp</dimen>
+    <dimen name="dp_67">67dp</dimen>
+    <dimen name="dp_68">68dp</dimen>
+    <dimen name="dp_69">69dp</dimen>
+    <dimen name="dp_70">70dp</dimen>
+    <dimen name="dp_71">71dp</dimen>
+    <dimen name="dp_72">72dp</dimen>
+    <dimen name="dp_73">73dp</dimen>
+    <dimen name="dp_74">74dp</dimen>
+    <dimen name="dp_75">75dp</dimen>
+    <dimen name="dp_76">76dp</dimen>
+    <dimen name="dp_77">77dp</dimen>
+    <dimen name="dp_78">78dp</dimen>
+    <dimen name="dp_79">79dp</dimen>
+    <dimen name="dp_80">80dp</dimen>
+    <dimen name="dp_81">81dp</dimen>
+    <dimen name="dp_82">82dp</dimen>
+    <dimen name="dp_83">83dp</dimen>
+    <dimen name="dp_84">84dp</dimen>
+    <dimen name="dp_85">85dp</dimen>
+    <dimen name="dp_86">86dp</dimen>
+    <dimen name="dp_87">87dp</dimen>
+    <dimen name="dp_88">88dp</dimen>
+    <dimen name="dp_89">89dp</dimen>
+    <dimen name="dp_90">90dp</dimen>
+    <dimen name="dp_91">91dp</dimen>
+    <dimen name="dp_92">92dp</dimen>
+    <dimen name="dp_93">93dp</dimen>
+    <dimen name="dp_94">94dp</dimen>
+    <dimen name="dp_95">95dp</dimen>
+    <dimen name="dp_96">96dp</dimen>
+    <dimen name="dp_97">97dp</dimen>
+    <dimen name="dp_98">98dp</dimen>
+    <dimen name="dp_99">99dp</dimen>
+    <dimen name="dp_100">100dp</dimen>
+    <dimen name="dp_120">120dp</dimen>
+
+
+    <dimen name="text_max">18sp</dimen>
+</resources>

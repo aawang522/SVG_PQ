@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <com.svg.linechart.LineChartInViewPager
+        android:id="@+id/new_lineChart1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.8"/>
+
+    <com.svg.utils.RadioGroupEx
+        android:id="@+id/rgex1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/maintext_hint"
+        android:layout_marginTop="10dp"
+        android:layout_centerVertical="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rbAX1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="A相电流"
+            android:checked="true"/>
+
+        <RadioButton
+            android:id="@+id/rbBX1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="B相电流" />
+
+        <RadioButton
+            android:id="@+id/rbCX1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="C相电流" />
+
+        <RadioButton
+            android:id="@+id/rbGLYS1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="功率因数" />
+
+        <RadioButton
+            android:id="@+id/rbXBHL1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="谐波含量" />
+
+        <RadioButton
+            android:id="@+id/rbBPHD1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="不平衡度" />
+    </com.svg.utils.RadioGroupEx>
+</LinearLayout>

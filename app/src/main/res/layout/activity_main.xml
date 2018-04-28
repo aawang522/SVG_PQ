@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:tl="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.svg.activity.MainActivity">
+
+    <!--//选中时游标的颜色
+     app:tabIndicatorColor="@color/red"
+     //选中时的字体颜色
+     app:tabSelectedTextColor="@color/red"
+     //未选中时的字体颜色
+     app:tabTextColor="@color/gray"-->
+    <android.support.design.widget.TabLayout
+        android:id="@+id/mTab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:tabIndicatorColor="@color/maincolor"
+        app:tabSelectedTextColor="@color/maincolor"
+        app:tabTextColor="@color/maintitle">
+    </android.support.design.widget.TabLayout>
+
+    <!--<android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>-->
+    <!--装五个fragment-->
+    <FrameLayout
+        android:id="@+id/main_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        >
+    </FrameLayout>
+
+</LinearLayout>

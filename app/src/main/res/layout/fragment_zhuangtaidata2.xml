@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray5"
+    android:orientation="vertical"
+    android:padding="@dimen/activity_horizontal_margin">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/txtFBDRQ1A"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="分补电容器1号A相"
+        android:background="@drawable/bg_login_passwd"/>
+
+    <TextView
+        android:id="@+id/txtFBDRQ1B"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:text="分补电容器1号B相"
+        android:background="@drawable/bg_login_passwd"/>
+
+    <TextView
+        android:id="@+id/txtFBDRQ1C"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:text="分补电容器1号C相"
+        android:background="@drawable/bg_login_passwd"/>
+
+    <TextView
+        android:id="@+id/txtFBDRQ2A"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:text="分补电容器2号A相"
+        android:background="@drawable/bg_login_passwd"/>
+
+    <TextView
+        android:id="@+id/txtFBDRQ2B"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:text="分补电容器2号B相"
+        android:background="@drawable/bg_login_passwd"/>
+
+    <TextView
+        android:id="@+id/txtFBDRQ2C"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:text="分补电容器2号C相"
+        android:background="@drawable/bg_login_passwd"/>
+
+    <TextView
+        android:id="@+id/txtFBDRQ3A"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:text="分补电容器3号A相"
+        android:background="@drawable/bg_login_passwd"/>
+
+    <TextView
+        android:id="@+id/txtFBDRQ3B"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:text="分补电容器3号B相"
+        android:background="@drawable/bg_login_passwd"/>
+
+    <TextView
+        android:id="@+id/txtFBDRQ3C"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:text="分补电容器3号C相"
+        android:background="@drawable/bg_login_passwd"/>
+
+    <TextView
+        android:id="@+id/txtGBDRQ1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:text="共补电容器1号"
+        android:background="@drawable/bg_login_passwd"/>
+
+    <TextView
+        android:id="@+id/txtGBDRQ2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:text="共补电容器2号"
+        android:background="@drawable/bg_login_passwd"/>
+
+    <TextView
+        android:id="@+id/txtGBDRQ3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:text="共补电容器3号"
+        android:background="@drawable/bg_login_passwd"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

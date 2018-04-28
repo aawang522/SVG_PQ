@@ -1,0 +1,166 @@
+<resources>
+    <string name="app_name">电能质量检测治理系统</string>
+
+    <string name="enter_username">请输入用户名</string>
+    <string name="enter_password">请输入密码</string>
+    <string name="check_login">下次直接登录</string>
+    <string name="button_login">登录</string>
+    <string name="set_ip">IP设置</string>
+    <string name="set_ippath">IP地址：</string>
+    <string name="set_port">端口号：</string>
+
+    <string name="search">搜索</string>
+    <string name="cancle">取消</string>
+    <string name="comfirm">确定</string>
+    <string name="conection">连接</string>
+    <string name="edit">编辑</string>
+    <string name="delete">删除</string>
+
+    <!-- 遥测数据1 -->
+    <string name="yaoce_yggl">有功功率：</string>
+    <string name="yaoce_wggl">无功功率：</string>
+    <string name="yaoce_glys">功率因数：</string>
+    <string name="yaoce_wyglys">位移功率因数：</string>
+    <string name="yaoce_pl">频率：</string>
+    <string name="yaoce_abxdy">AB线电压：</string>
+    <string name="yaoce_bcxdy">BC线电压：</string>
+    <string name="yaoce_caxdy">CA线电压：</string>
+    <string name="yaoce_abxdythd">AB线电压thd：</string>
+    <string name="yaoce_bcxdythd">BC线电压thd：</string>
+    <string name="yaoce_caxdythd">CA线电压thd：</string>
+    <string name="yaoce_axzldy">A相直流电压：</string>
+    <string name="yaoce_dlbphd">电流不平衡度：</string>
+    <string name="yaoce_axwcdl">a相网测电流：</string>
+    <string name="yaoce_bxwcdl">b相网测电流：</string>
+    <string name="yaoce_cxxwcdl">c相网测电流：</string>
+
+    <!-- 遥测数据2 -->
+    <string name="yaoce_zxwcdl">中相网测电流：</string>
+    <string name="yaoce_axwcjbdl">a相网测基波电流：</string>
+    <string name="yaoce_bxwcjbdl">b相网测基波电流：</string>
+    <string name="yaoce_cxwcjbdl">c相网测基波电流：</string>
+    <string name="yaoce_zxwcjbdl">中相网测基波电流：</string>
+    <string name="yaoce_axwcdlthd">a相网测电流thd：</string>
+    <string name="yaoce_bxwcdlthd">b相网测电流thd：</string>
+    <string name="yaoce_cxwcdlthd">c相网测电流thd：</string>
+    <string name="yaoce_zxwcdlthd">中相网测电流thd：</string>
+    <string name="yaoce_axnbqdl">a相逆变器电流：</string>
+    <string name="yaoce_bxnbqdl">b相逆变器电流：</string>
+    <string name="yaoce_cxnbqdl">c相逆变器电流：</string>
+    <string name="yaoce_axdywd">A相单元温度：</string>
+    <string name="yaoce_bxdywd">B相单元温度：</string>
+    <string name="yaoce_cxdywd">C相单元温度：</string>
+
+    <!-- 遥测数据3 -->
+    <string name="yaoce_a1cxb">A1次谐波：</string>
+    <string name="yaoce_a2cxb">A2次谐波：</string>
+    <string name="yaoce_a3cxb">A3次谐波：</string>
+    <string name="yaoce_a4cxb">A4次谐波：</string>
+    <string name="yaoce_a5cxb">A5次谐波：</string>
+    <string name="yaoce_a6cxb">A6次谐波：</string>
+    <string name="yaoce_a7cxb">A7次谐波：</string>
+    <string name="yaoce_a8cxb">A8次谐波：</string>
+    <string name="yaoce_a9cxb">A9次谐波：</string>
+    <string name="yaoce_a10cxb">A10次谐波：</string>
+    <string name="yaoce_a11cxb">A11次谐波：</string>
+    <string name="yaoce_a12cxb">A12次谐波：</string>
+    <string name="yaoce_a13cxb">A13次谐波：</string>
+
+    <!-- 遥调数据1 -->
+    <string name="yaotiao_eddl">额定电流：</string>
+    <string name="yaotiao_zxxms">中性线模式：</string>
+    <string name="yaotiao_zlceddy">直流侧额定电压：</string>
+    <string name="yaotiao_blts">并联台数：</string>
+    <string name="yaotiao_ctbb">CT变比：</string>
+    <string name="yaotiao_hebb">霍尔变比：</string>
+    <string name="yaotiao_gybh1z">过压保护1值：</string>
+    <string name="yaotiao_glbhz">过流保护值：</string>
+    <string name="yaotiao_glbhsj">过流保护时间：</string>
+    <string name="yaotiao_glfzbh">过流峰值保护：</string>
+    <string name="yaotiao_scdlqx">输出电流缺相：</string>
+    <string name="yaotiao_scdlqxsj">输出电流缺相时间：</string>
+    <string name="yaotiao_jdbhdl">接地保护电流：</string>
+    <string name="yaotiao_dygybhz">单元过压保护值：</string>
+    <string name="yaotiao_dyqybhz">单元欠压保护值：</string>
+
+    <!-- 遥调数据2 -->
+    <string name="yaotiao_dyycddy">单元预充电电压：</string>
+    <string name="yaotiao_xb1mbz">谐波1目标值：</string>
+    <string name="yaotiao_xb2mbz">谐波2目标值：</string>
+    <string name="yaotiao_xb3mbz">谐波3目标值：</string>
+    <string name="yaotiao_xb4mbz">谐波4目标值：</string>
+    <string name="yaotiao_xb5mbz">谐波5目标值：</string>
+    <string name="yaotiao_xb6mbz">谐波6目标值：</string>
+    <string name="yaotiao_xb7mbz">谐波7目标值：</string>
+    <string name="yaotiao_xb8mbz">谐波8目标值：</string>
+    <string name="yaotiao_xb9mbz">谐波9目标值：</string>
+    <string name="yaotiao_xb10mbz">谐波10目标值：</string>
+    <string name="yaotiao_xb11mbz">谐波11目标值：</string>
+    <string name="yaotiao_xb12mbz">谐波12目标值：</string>
+    <string name="yaotiao_xb13mbz">谐波13目标值：</string>
+    <string name="yaotiao_xb1cs">谐波1次数：</string>
+
+    <!-- 遥调数据3 -->
+    <string name="yaotiao_xb2cs">谐波2次数：</string>
+    <string name="yaotiao_xb3cs">谐波3次数：</string>
+    <string name="yaotiao_xb4cs">谐波4次数：</string>
+    <string name="yaotiao_xb5cs">谐波5次数：</string>
+    <string name="yaotiao_xb6cs">谐波6次数：</string>
+    <string name="yaotiao_xb7cs">谐波7次数：</string>
+    <string name="yaotiao_xb8cs">谐波8次数：</string>
+    <string name="yaotiao_xb9cs">谐波9次数：</string>
+    <string name="yaotiao_xb10cs">谐波10次数：</string>
+    <string name="yaotiao_xb11cs">谐波11次数：</string>
+    <string name="yaotiao_xb12cs">谐波12次数：</string>
+    <string name="yaotiao_xb13cs">谐波13次数：</string>
+    <string name="yaotiao_xb1sn">谐波1使能：</string>
+    <string name="yaotiao_xb2sn">谐波2使能：</string>
+    <string name="yaotiao_xb3sn">谐波3使能：</string>
+
+    <!-- 遥调数据4 -->
+    <string name="yaotiao_xb4sn">谐波4使能：</string>
+    <string name="yaotiao_xb5sn">谐波5使能：</string>
+    <string name="yaotiao_xb6sn">谐波6使能：</string>
+    <string name="yaotiao_xb7sn">谐波7使能：</string>
+    <string name="yaotiao_xb8sn">谐波8使能：</string>
+    <string name="yaotiao_xb9sn">谐波9使能：</string>
+    <string name="yaotiao_xb10sn">谐波10使能：</string>
+    <string name="yaotiao_xb11sn">谐波11使能：</string>
+    <string name="yaotiao_xb12sn">谐波12使能：</string>
+    <string name="yaotiao_xb13sn">谐波13使能：</string>
+    <string name="yaotiao_yxms">运行模式：</string>
+    <string name="yaotiao_wgbcms">无功补偿模式：</string>
+    <string name="yaotiao_xbbcms">谐波补偿模式：</string>
+    <string name="yaotiao_mbglys">目标功率因数：</string>
+    <string name="yaotiao_jesyys">降额使用因数：</string>
+
+    <!-- 遥调数据5 -->
+    <string name="yaotiao_wgzldl">无功指令电流：</string>
+    <string name="yaotiao_ppdxkz">频谱读写控制：</string>
+    <string name="yaotiao_gybh1">过压保护1：</string>
+    <string name="yaotiao_gybh2">过压保护2：</string>
+    <string name="yaotiao_qybh1">欠压保护1：</string>
+    <string name="yaotiao_qybh2">欠压保护2：</string>
+    <string name="yaotiao_dyfxbh">电压反序保护：</string>
+    <string name="yaotiao_dyqxbh">电压缺相保护：</string>
+    <string name="yaotiao_dybphbh">电压不平衡保护：</string>
+    <string name="yaotiao_glbh">过流保护：</string>
+    <string name="yaotiao_jddlbh1">接地电流保护1：</string>
+    <string name="yaotiao_zlgybh">直流过压保护：</string>
+    <string name="yaotiao_zlqybh">直流欠压保护：</string>
+    <string name="yaotiao_dyqdbh">单元驱动保护：</string>
+    <string name="yaotiao_cdcsbh">充电超时故障保护：</string>
+
+    <!-- 遥调数据6 -->
+    <string name="yaotiao_svgrl">SVG容量：</string>
+    <string name="yaotiao_1gbrl">1#共补容量：</string>
+    <string name="yaotiao_2gbrl">2#共补容量：</string>
+    <string name="yaotiao_3gbrl">3#共补容量：</string>
+    <string name="yaotiao_4dxfbrl">4#单相分补容量：</string>
+    <string name="yaotiao_5dxfbrl">5#单相分补容量：</string>
+    <string name="yaotiao_6dxfbrl">6#单相分补容量：</string>
+
+    <string name="edittag_fudian">fudian</string>
+    <string name="edittag_wufuhao">wufuhao</string>
+    <string name="edittag_youfuhao">youfuhao</string>
+</resources>

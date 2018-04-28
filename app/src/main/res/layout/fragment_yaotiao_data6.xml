@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 遥调数据5界面 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mainbackgroud"
+    android:padding="@dimen/activity_horizontal_margin">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
+
+        <!-- 调度等级 -->
+        <LinearLayout
+            style="@style/WorkInfoLinearLayout">
+            <TextView
+                style="@style/WorkInfoLeftTextView"
+                android:text="@string/yaotiao_gybh1"
+                android:layout_weight="1"/>
+            <CheckBox
+                android:id="@+id/yaotiao_gybh1"
+                style="@style/checkbox"/>
+        </LinearLayout>
+        <ImageView
+            style="@style/Line_horizontal"/>
+        <!-- 影响程度 -->
+        <LinearLayout
+            style="@style/WorkInfoLinearLayout">
+            <TextView
+                style="@style/WorkInfoLeftTextView"
+                android:text="@string/yaotiao_gybh2"
+                android:layout_weight="1"/>
+            <CheckBox
+                android:id="@+id/yaotiao_gybh2"
+                style="@style/checkbox"/>
+        </LinearLayout>
+        <ImageView
+            style="@style/Line_horizontal"/>
+        <!-- 中断起始时间 -->
+        <LinearLayout
+            style="@style/WorkInfoLinearLayout">
+            <TextView
+                style="@style/WorkInfoLeftTextView"
+                android:text="@string/yaotiao_qybh1"
+                android:layout_weight="1"/>
+            <CheckBox
+                android:id="@+id/yaotiao_qybh1"
+                style="@style/checkbox"/>
+        </LinearLayout>
+        <ImageView
+            style="@style/Line_horizontal"/>
+        <!-- 中断终止时间 -->
+        <LinearLayout
+            style="@style/WorkInfoLinearLayout">
+            <TextView
+                style="@style/WorkInfoLeftTextView"
+                android:text="@string/yaotiao_qybh2"
+                android:layout_weight="1"/>
+            <CheckBox
+                android:id="@+id/yaotiao_qybh2"
+                style="@style/checkbox"/>
+        </LinearLayout>
+        <ImageView
+            style="@style/Line_horizontal"/>
+        <!-- 采取措施 -->
+        <LinearLayout
+            style="@style/WorkInfoLinearLayout">
+            <TextView
+                style="@style/WorkInfoLeftTextView"
+                android:text="@string/yaotiao_dyfxbh"
+                android:layout_weight="1"/>
+            <CheckBox
+                android:id="@+id/yaotiao_dyfxbh"
+                style="@style/checkbox"/>
+        </LinearLayout>
+        <ImageView
+            style="@style/Line_horizontal"/>
+        <!-- 备注 -->
+        <LinearLayout
+            style="@style/WorkInfoLinearLayout">
+            <TextView
+                style="@style/WorkInfoLeftTextView"
+                android:text="@string/yaotiao_dyqxbh"
+                android:layout_weight="1"/>
+            <CheckBox
+                android:id="@+id/yaotiao_dyqxbh"
+                style="@style/checkbox"/>
+        </LinearLayout>
+        <ImageView
+            style="@style/Line_horizontal"/>
+        <!-- 业务名称 -->
+        <LinearLayout
+            style="@style/WorkInfoLinearLayout">
+            <TextView
+                style="@style/WorkInfoLeftTextView"
+                android:text="@string/yaotiao_dybphbh"
+                android:layout_weight="1"/>
+            <CheckBox
+                android:id="@+id/yaotiao_dybphbh"
+                style="@style/checkbox"/>
+        </LinearLayout>
+        <ImageView
+            style="@style/Line_horizontal"/>
+        <!-- 业务名称 -->
+        <LinearLayout
+            style="@style/WorkInfoLinearLayout">
+            <TextView
+                style="@style/WorkInfoLeftTextView"
+                android:text="@string/yaotiao_glbh"
+                android:layout_weight="1"/>
+            <CheckBox
+                android:id="@+id/yaotiao_glbh"
+                style="@style/checkbox"/>
+        </LinearLayout>
+        <ImageView
+            style="@style/Line_horizontal"/>
+        <!-- 业务类型 -->
+        <LinearLayout
+            style="@style/WorkInfoLinearLayout">
+            <TextView
+                style="@style/WorkInfoLeftTextView"
+                android:text="@string/yaotiao_jddlbh1"
+                android:layout_weight="1"/>
+            <CheckBox
+                android:id="@+id/yaotiao_jddlbh1"
+                style="@style/checkbox"/>
+        </LinearLayout>
+        <ImageView
+            style="@style/Line_horizontal"/>
+        <!-- 调度等级 -->
+        <LinearLayout
+            style="@style/WorkInfoLinearLayout">
+            <TextView
+                style="@style/WorkInfoLeftTextView"
+                android:text="@string/yaotiao_zlgybh"
+                android:layout_weight="1"/>
+            <CheckBox
+                android:id="@+id/yaotiao_zlgybh"
+                style="@style/checkbox"/>
+        </LinearLayout>
+        <ImageView
+            style="@style/Line_horizontal"/>
+        <!-- 影响程度 -->
+        <LinearLayout
+            style="@style/WorkInfoLinearLayout">
+            <TextView
+                style="@style/WorkInfoLeftTextView"
+                android:text="@string/yaotiao_zlqybh"
+                android:layout_weight="1"/>
+            <CheckBox
+                android:id="@+id/yaotiao_zlqybh"
+                style="@style/checkbox"/>
+        </LinearLayout>
+        <ImageView
+            style="@style/Line_horizontal"/>
+        <!-- 中断起始时间 -->
+        <LinearLayout
+            style="@style/WorkInfoLinearLayout">
+            <TextView
+                style="@style/WorkInfoLeftTextView"
+                android:text="@string/yaotiao_dyqdbh"
+                android:layout_weight="1"/>
+            <CheckBox
+                android:id="@+id/yaotiao_dyqdbh"
+                style="@style/checkbox"/>
+        </LinearLayout>
+        <ImageView
+            style="@style/Line_horizontal"/>
+        <!-- 中断终止时间 -->
+        <LinearLayout
+            style="@style/WorkInfoLinearLayout">
+            <TextView
+                style="@style/WorkInfoLeftTextView"
+                android:text="@string/yaotiao_cdcsbh"
+                android:layout_weight="1"/>
+            <CheckBox
+                android:id="@+id/yaotiao_cdcsbh"
+                style="@style/checkbox"/>
+        </LinearLayout>
+
+    </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btn_data6commit"
+        style="@style/submitButton"/>
+
+</LinearLayout>

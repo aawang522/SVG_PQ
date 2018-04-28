@@ -1,0 +1,174 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="loading_dialog" parent="@android:style/Theme.Dialog">
+        <!--背景透明-->
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+    <style name="my_loading_dialog" parent="android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@drawable/custom_progressdialog</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <!-- 横线 -->
+    <style name="Line_horizontal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/dp_1</item>
+        <item name="android:src">@color/maintext_hint</item>
+    </style>
+
+    <!-- 竖线 -->
+    <style name="Line_vertical">
+        <item name="android:layout_width">@dimen/dp_1</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:src">@color/maintext_hint</item>
+    </style>
+
+    <!-- 登录输入框背景LinearLayout风格 -->
+    <style name="LoginLinearLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>
+    </style>
+    <!-- 登录字体风格 -->
+    <style name="LoginEditText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textSize">@dimen/dp_21</item>
+        <item name="android:textColor">@color/maintext_content</item>
+        <item name="android:background">@drawable/bg_login_pwd</item>
+        <item name="android:textColorHint">@color/maintext_hint</item>
+        <item name="android:singleLine">true</item>
+    </style>
+    <!-- ip设置左边字体风格 -->
+    <style name="IpSetText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/info_textSize</item>
+        <item name="android:textColor">@color/maincolor</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+    <!-- ip设置右边输入字体风格 -->
+    <style name="IpSetEditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/info_textSize</item>
+        <item name="android:textColor">@color/darkGray</item>
+        <item name="android:textColorHint">@color/maintext_hint</item>
+        <item name="android:inputType">textEmailAddress</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <!-- 工单详情LinearLayout风格 -->
+    <style name="WorkInfoLinearLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <!-- 工单详情左边标题TextView风格 -->
+    <style name="WorkInfoLeftTextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/activity_orderHight</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/maintext_title</item>
+        <item name="android:textSize">@dimen/info_textSize</item>
+    </style>
+    <!-- 工单详情右边内容EditText风格 无符号-->
+    <style name="WorkInfoRightEditText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">right</item>
+        <item name="android:textColor">@color/maintext_content</item>
+        <item name="android:textSize">@dimen/info_textSize</item>
+        <item name="android:textColorHint">@color/maintext_hint</item>
+        <item name="android:layout_marginLeft">@dimen/dp_10</item>
+        <item name="android:background">@null</item>
+        <item name="android:inputType">number</item>
+        <item name="android:tag">@string/edittag_wufuhao</item>
+    </style>
+
+    <!-- 工单详情右边内容EditText风格 浮点数-->
+    <style name="WorkInfoRightEditText_Fudianshu">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">right</item>
+        <item name="android:textColor">@color/maintext_content</item>
+        <item name="android:textSize">@dimen/info_textSize</item>
+        <item name="android:textColorHint">@color/maintext_hint</item>
+        <item name="android:layout_marginLeft">@dimen/dp_10</item>
+        <item name="android:background">@null</item>
+        <item name="android:inputType">number|numberDecimal</item>
+        <item name="android:tag">@string/edittag_fudian</item>
+    </style>
+
+    <!-- 业务、通道详情右边内容EditText风格 -->
+    <style name="BusinessInfoRightEditText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">@color/maintext_content</item>
+        <item name="android:textSize">@dimen/info_textSize</item>
+        <item name="android:layout_marginLeft">@dimen/dp_10</item>
+        <item name="android:editable">false</item>
+        <item name="android:focusable">false</item>
+        <item name="android:text">----</item>
+        <item name="android:gravity">right</item>
+    </style>
+
+    <style name="textDanwei">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:textSize">@dimen/info_textSize</item>
+        <item name="android:text">""</item>
+        <item name="android:textColor">@color/lightGray</item>
+    </style>
+
+    <style name="checkbox">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:button">@drawable/checkbox_setting</item>
+        <item name="android:gravity">right</item>
+    </style>
+    <style name="submitButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/activity_horizontal_margin</item>
+        <item name="android:background">@drawable/text_blue_shape</item>
+        <item name="android:text">"提交"</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/dp_15</item>
+        <item name="android:onClick">onClick</item>
+    </style>
+
+    <!-- checkbox style -->
+    <style name="CheckBoxStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/maintitle</item>
+        <item name="android:textSize">20dp</item>
+        <item name="android:button">@drawable/selector_checkbox</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:onClick">onCheck</item>
+        <item name="android:layout_margin">@dimen/activity_horizontal_margin</item>
+    </style>
+</resources>

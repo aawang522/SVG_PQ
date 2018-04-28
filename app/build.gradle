@@ -1,0 +1,50 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.3"
+    defaultConfig {
+        applicationId "com.svg"
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    //    testCompile 'junit:junit:4.12'
+    compile 'com.github.luoshihai:XXRecyclerView:v1.2.7'
+    compile 'com.github.luoshihai:XXDialog:v1.0.3'
+    //网络框架引入
+    compile 'com.yanzhenjie.nohttp:okhttp:1.1.3'
+    // 注解
+    compile 'com.jakewharton:butterknife:8.5.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    compile files('libs/gson-2.3.1.jar')
+    compile 'com.oguzdev:CircularFloatingActionMenu:1.0.2'
+    compile files('libs/android-support-v4.jar')
+    compile 'com.android.support:design:25.0.0'
+    compile 'com.flyco.roundview:FlycoRoundView_Lib:1.1.2@aar'
+    compile 'com.flyco.tablayout:FlycoTabLayout_Lib:1.5.0@aar'
+    // 绘制曲线图的控件
+    //    compile 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+//    compile 'com.github.lecho:hellocharts-android:v1.5.8'
+
+//    compile files('libs/mpandroidchartlibrary-2-1-3.jar')
+    compile project(':MPChartLib')
+//    compile 'com.nex3z:flow-layout:0.1.4'
+}

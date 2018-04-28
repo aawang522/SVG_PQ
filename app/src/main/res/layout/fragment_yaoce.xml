@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--<android.support.v4.view.ViewPager
+        android:id="@+id/viewPagerYaoce"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />-->
+
+    <!--装五个fragment-->
+    <FrameLayout
+        android:id="@+id/yaoce_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        >
+    </FrameLayout>
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/mTab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:tabIndicatorColor="@color/foot_blue"
+        app:tabSelectedTextColor="@color/foot_blue"
+        app:tabTextColor="@color/maintitle">
+    </android.support.design.widget.TabLayout>
+
+</LinearLayout>

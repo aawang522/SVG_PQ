@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray5"
+    android:orientation="vertical"
+    android:padding="@dimen/activity_horizontal_margin">
+
+    <TextView
+        android:id="@+id/txtCSZT"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:text="初始状态"
+        android:background="@drawable/bg_login_passwd"/>
+
+    <TextView
+        android:id="@+id/txtYCDZT"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:text="预充电状态"
+        android:background="@drawable/bg_login_passwd"/>
+
+    <TextView
+        android:id="@+id/txtHZZT"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:text="合闸状态"
+        android:background="@drawable/bg_login_passwd"/>
+
+    <TextView
+        android:id="@+id/txtJXZT"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:text="就绪状态"
+        android:background="@drawable/bg_login_passwd"/>
+
+    <TextView
+        android:id="@+id/txtXYZT"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:text="运行状态"
+        android:background="@drawable/bg_login_passwd"/>
+
+    <TextView
+        android:id="@+id/txtKAI"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:text="故障状态"
+        android:background="@drawable/bg_login_passwd"/>
+</LinearLayout>

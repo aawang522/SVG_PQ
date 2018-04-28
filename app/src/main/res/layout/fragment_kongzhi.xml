@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mainbackgroud"
+    android:padding="@dimen/activity_horizontal_margin">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:background="@color/white">
+    <CheckBox
+        android:id="@+id/checkZZQD"
+        style="@style/CheckBoxStyle"
+        android:text="装置启动" />
+
+    <CheckBox
+        android:id="@+id/checkZZTJ"
+        style="@style/CheckBoxStyle"
+        android:text="装置停机" />
+
+    <CheckBox
+        android:id="@+id/checkZZFW"
+        style="@style/CheckBoxStyle"
+        android:text="装置复位" />
+    </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btn_kongzhi"
+        style="@style/submitButton"/>
+</LinearLayout>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="red1">#E03426</color>
+    <color name="red2">#FF4500</color>
+    <color name="blue">#00BFFF</color>
+    <color name="blue2">#00B2EE</color>
+    <color name="blue3">#38adff</color>
+    <color name="blue4">#1500B2EE</color>
+    <color name="blue5">#6600B2EE</color>
+    <color name="gray">#cccccc</color>
+    <color name="gray1">#444444</color>
+    <color name="gray2">#44444444</color>
+    <color name="gray3">#f5f5f5</color>
+    <color name="gray4">#cecece</color>
+    <color name="gray5">#44cecece</color>
+    <color name="gray6">#77000000</color>
+    <color name="darkGray">#404040</color>
+    <color name="lightGray">#808080</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="red">#F31E1E</color>
+    <color name="halfTransparent">#e0000000</color>
+    <color name="transparent">#00000000</color>
+
+    <color name="maincolor">#1cbb9b</color>
+    <color name="mainbackgroud">#f3f5f7</color>
+
+    <!-- 标题颜色 -->
+    <color name="maintitle">#444444</color>
+    <!-- 文本标题，左边较浅色 -->
+    <color name="maintext_title">#808080</color>
+    <!-- 文本内容，右边较深色 -->
+    <color name="maintext_content">#555555</color>
+    <!-- 文本内容，简介和帮助 -->
+    <color name="maintext_help">#666666</color>
+    <!-- hint颜色 -->
+    <color name="maintext_hint">#CECECE</color>
+    <color name="menu_backgroud">#25242a</color>
+
+    <!-- 标题颜色 -->
+    <color name="foot_blue">#169ADE</color>
+</resources>
