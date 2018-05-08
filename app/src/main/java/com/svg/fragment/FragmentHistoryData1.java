@@ -92,38 +92,52 @@ public class FragmentHistoryData1 extends Fragment implements HistoryResponseLis
         lineChart = (LineChartInViewPager) view.findViewById(R.id.new_lineChart1);
         radioGroupEx = (RadioGroupEx)view.findViewById(R.id.rgex1);
 
-        radioGroupEx.check(R.id.rbAX1);
+        radioGroupEx.check(R.id.rbBCQ1);
         radioGroupEx.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
                 switch (checkedId){
-                    case R.id.rbAX1:
+                    case R.id.rbBCQ1:
                         // 2400
-                        start1 = 0x09;
-                        start2 = 0x60;
-                        // 2800
-                        after1 = 0x0A;
-                        after2 = (byte) 0xF0;
+//                        start1 = 0x09;
+//                        start2 = 0x60;
+//                        // 2800
+//                        after1 = 0x0A;
+//                        after2 = (byte) 0xF0;
+                        A1 = 0x09;
+                        A2 = 0x60;
+                        B1 = 0x0C;
+                        B2 = (byte) 0x80;
+                        C1 = 0x0F;
+                        C2 = (byte) 0xA0;
                         danwei = "A";
+                        showThreeOrTwo = true;
                         break;
-                    case R.id.rbBX1:
+                    case R.id.rbBCH1:
                         // 3200
-                        start1 = 0x0C;
-                        start2 = (byte) 0x80;
-                        // 3600
-                        after1 = 0x0E;
-                        after2 = 0x10;
+//                        start1 = 0x0C;
+//                        start2 = (byte) 0x80;
+//                        // 3600
+//                        after1 = 0x0E;
+//                        after2 = 0x10;
+                        A1 = 0x0A;
+                        A2 = (byte) 0xF0;
+                        B1 = 0x0E;
+                        B2 = 0x10;
+                        C1 = 0x11;
+                        C2 = 0x30;
                         danwei = "A";
+                        showThreeOrTwo = true;
                         break;
-                    case R.id.rbCX1:
-                        // 4000
-                        start1 = 0x0F;
-                        start2 = (byte) 0xA0;
-                        // 4400
-                        after1 = 0x11;
-                        after2 = 0x30;
-                        danwei = "A";
-                        break;
+//                    case R.id.rbCX1:
+//                        // 4000
+//                        start1 = 0x0F;
+//                        start2 = (byte) 0xA0;
+//                        // 4400
+//                        after1 = 0x11;
+//                        after2 = 0x30;
+//                        danwei = "A";
+//                        break;
                     case R.id.rbGLYS1:
                         // 4800
                         start1 = 0x12;
@@ -132,6 +146,7 @@ public class FragmentHistoryData1 extends Fragment implements HistoryResponseLis
                         after1 = 0x14;
                         after2 = (byte) 0x50;
                         danwei = "%";
+                        showThreeOrTwo = false;
                         break;
                     case R.id.rbXBHL1:
                         // 5600
@@ -141,6 +156,7 @@ public class FragmentHistoryData1 extends Fragment implements HistoryResponseLis
                         after1 = 0x17;
                         after2 = (byte) 0x70;
                         danwei = "%";
+                        showThreeOrTwo = false;
                         break;
                     case R.id.rbBPHD1:
                         // 6400
@@ -150,10 +166,15 @@ public class FragmentHistoryData1 extends Fragment implements HistoryResponseLis
                         after1 = 0x1A;
                         after2 = (byte) 0x90;
                         danwei = "%";
+                        showThreeOrTwo = false;
                         break;
                 }
                 // 获取数据
-                initData(start1, start2, after1, after2);
+                if(showThreeOrTwo) {
+                    initDataABC(A1,A2,B1,B2,C1,C2);
+                } else {
+                    initData(start1, start2, after1, after2);
+                }
             }
         });
     }
@@ -171,7 +192,7 @@ public class FragmentHistoryData1 extends Fragment implements HistoryResponseLis
         // 设置补偿后请求报文
         byte[] requestOriginalData2 = setRequestData(after1, after2);
         // 调用连接modbus函数
-        ConnectModbus.connectServerGetHistory(MyApp.socket, requestOriginalData1, requestOriginalData2, responseListner);
+        ConnectModbus.connectServerGetHistory(requestOriginalData1, requestOriginalData2, responseListner);
     }
 
     /**
@@ -185,7 +206,8 @@ public class FragmentHistoryData1 extends Fragment implements HistoryResponseLis
         // 设置C请求报文
         byte[] requestOriginalData3 = setRequestData(C1, C2);
         // 调用连接modbus函数
-        ConnectModbus.connectServerGetHistory(MyApp.socket, requestOriginalData1, requestOriginalData2, responseListner);
+        ConnectModbus.connectServerGetHistoryABC(MyApp.socket, requestOriginalData1, requestOriginalData2,
+                requestOriginalData3, responseListner);
     }
 
     /**
@@ -225,8 +247,13 @@ public class FragmentHistoryData1 extends Fragment implements HistoryResponseLis
             case 3001:
                 Map<String, byte[]> map = new ArrayMap<>();
                 map = (Map<String, byte[]>)msg.obj;
-                SetLineChart.setLineData(getContext(), lineChart, map.get("data1"), map.get("data2"),
-                        danwei, SysCode.HISTYORY_YEAR, length);
+                if(showThreeOrTwo) {
+                    SetLineChart.setLineDataABC(getContext(), lineChart, map.get("data1"), map.get("data2"),
+                            map.get("data3"), danwei, SysCode.HISTYORY_YEAR, length);
+                } else {
+                    SetLineChart.setLineData(getContext(), lineChart, map.get("data1"), map.get("data2"),
+                            danwei, SysCode.HISTYORY_YEAR, length);
+                }
                 break;
         }
         return false;
@@ -237,7 +264,7 @@ public class FragmentHistoryData1 extends Fragment implements HistoryResponseLis
         super.onHiddenChanged(hidden);
         if(!hidden){
             if(showThreeOrTwo) {
-
+                initDataABC(A1,A2,B1,B2,C1,C2);
             } else {
                 initData(start1, start2, after1, after2);
             }
@@ -247,6 +274,10 @@ public class FragmentHistoryData1 extends Fragment implements HistoryResponseLis
     @Override
     public void onResume() {
         super.onResume();
-        initData(start1, start2, after1, after2);
+        if(showThreeOrTwo) {
+            initDataABC(A1,A2,B1,B2,C1,C2);
+        } else {
+            initData(start1, start2, after1, after2);
+        }
     }
 }

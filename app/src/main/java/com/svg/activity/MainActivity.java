@@ -20,12 +20,15 @@ import com.svg.common.MyApp;
 import com.svg.fragment.FragmentHistory;
 import com.svg.fragment.FragmentShijian;
 import com.svg.fragment.FragmentYaoTiao;
+import com.svg.fragment.FragmentYaoTiao2;
 import com.svg.fragment.FragmentYaoce;
 import com.svg.fragment.FragmentYaoceData1;
 import com.svg.fragment.FragmentYaoceData2;
 import com.svg.fragment.FragmentYaoceData3;
 import com.svg.fragment.FragmentYaoceGonglv;
 import com.svg.fragment.FragmentZhuangtai;
+import com.svg.utils.SPUtils;
+import com.svg.utils.SysCode;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -39,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager;
     private FragmentYaoce fg1;
     private FragmentYaoTiao fg2;
+    private FragmentYaoTiao2 fg2_2;
     private FragmentShijian fg3;
     private FragmentZhuangtai fg4;
     private FragmentHistory fg5;
@@ -52,11 +56,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mTab = (TabLayout) findViewById(R.id.mTab);
         fragmentManager = getSupportFragmentManager();
-
-//        if(null == MyApp.socket || MyApp.socket.isClosed()) {
-//            MyApp.socket = new Socket();
-            ConnectModbus.connectSocket(true);
-//        }
 
         // 设置界面的默认值
         setDefaultInfo();
@@ -120,11 +119,20 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case 1:
-                if (fg2 == null) {
-                    fg2 = new FragmentYaoTiao();
-                    fragmentTransaction.add(R.id.main_fragment_container, fg2);
+                if(SysCode.LOGIN_SUPPER.equals(SPUtils.getString(MainActivity.this, SysCode.USER_OR_SUPPER))) {
+                    if (fg2 == null) {
+                        fg2 = new FragmentYaoTiao();
+                        fragmentTransaction.add(R.id.main_fragment_container, fg2);
+                    } else {
+                        fragmentTransaction.show(fg2);
+                    }
                 } else {
-                    fragmentTransaction.show(fg2);
+                    if (fg2_2 == null) {
+                        fg2_2 = new FragmentYaoTiao2();
+                        fragmentTransaction.add(R.id.main_fragment_container, fg2_2);
+                    } else {
+                        fragmentTransaction.show(fg2_2);
+                    }
                 }
                 break;
             case 2:
@@ -165,6 +173,9 @@ public class MainActivity extends AppCompatActivity {
         }
         if (fg2 != null) {
             fragmentTransaction.hide(fg2);
+        }
+        if (fg2_2 != null) {
+            fragmentTransaction.hide(fg2_2);
         }
         if (fg3 != null) {
             fragmentTransaction.hide(fg3);

@@ -14,7 +14,6 @@ public class YoyListEntity {
     private String year;
     private String month;
     private String amount; //销售数值
-    private String currentTime;
 
     public String getYear() {
         return year;
@@ -40,11 +39,4 @@ public class YoyListEntity {
         this.amount = amount;
     }
 
-    public String getCurrentTime() {
-        return currentTime;
-    }
-
-    public void setCurrentTime(String currentTime) {
-        this.currentTime = currentTime;
-    }
 }

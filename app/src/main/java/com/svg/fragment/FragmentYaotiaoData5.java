@@ -99,7 +99,7 @@ public class FragmentYaotiaoData5 extends Fragment implements ModbusResponseList
         // 设置请求报文
         byte[] requestOriginalData = setRequestData();
         // 调用连接modbus函数
-        ConnectModbus.connectServerWithTCPSocket(MyApp.socket, requestOriginalData, responseListner);
+        ConnectModbus.connectServerWithTCPSocket(requestOriginalData, responseListner);
     }
 
     /**
@@ -107,7 +107,7 @@ public class FragmentYaotiaoData5 extends Fragment implements ModbusResponseList
      */
     private void submitData(){
         // 调用连接modbus函数
-        ConnectModbus.submitDataWithTCPSocket(MyApp.socket, setSubmitRequestData(), responseListner);
+        ConnectModbus.submitDataWithTCPSocket(setSubmitRequestData(), responseListner);
     }
 
     /**
@@ -201,7 +201,13 @@ public class FragmentYaotiaoData5 extends Fragment implements ModbusResponseList
             case 1005:
                 List<String> dataList = new ArrayList<>();
                 dataList = parsing_YaoTiaoData5((byte[])msg.obj);
-                for (int i = 0; i<textList.size();i++){
+                int length = 0;
+                if(dataList.size() < textList.size()){
+                    length = dataList.size();
+                } else {
+                    length = textList.size();
+                }
+                for (int i = 0; i<length;i++){
                     if(null != textList.get(i)) {
                         textList.get(i).setText(dataList.get(i));
                     }

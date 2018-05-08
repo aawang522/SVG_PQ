@@ -50,11 +50,12 @@ public class SysCode {
     // 用户信息
     public static final String USER_SUPERNAME = "snd_admin";
     public static final String USER_SUPERPASS = "sndsx_5885";
-    public static final String USER_XM = "userName";
     public static final String USER_LOGIN_XM = "userXM";
     public static final String USER_LOGIN_MM = "userMM";
-    public static final String USER_DEPARTMENT = "userDepartment";
-    public static final String USER_MIP = "userMIP";
+    public static final String DEVICE_ID = "deviceID";
+    public static final String USER_OR_SUPPER = "userOrSupper";
+    public static final String LOGIN_SUPPER = "loginSupper";
+    public static final String LOGIN_USER = "loginUser";
     public static final String OBJECT_ID = "objectID";
     public static final String ATVIID = "atviID";
     public static final String SET_IP = "setIp";

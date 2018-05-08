@@ -4,11 +4,14 @@ import android.content.Context;
 import android.support.v4.util.ArrayMap;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 
 import com.svg.bean.HistoryBean;
 import com.svg.bean.ShijianBean;
+import com.svg.common.MyApp;
 import com.svg.utils.HistoryResponseListner;
 import com.svg.utils.ModbusResponseListner;
+import com.svg.utils.SPUtils;
 import com.svg.utils.SysCode;
 
 import java.io.IOException;
@@ -48,7 +51,7 @@ public class ConnectModbus {
                         InetSocketAddress isa = new InetSocketAddress("218.2.153.198", 9000);
                         connetSocket.connect(isa, 10000);
                         // 连接之后必须先发送写入设备ID命令
-                        writeIntoDevice(connetSocket);
+//                        writeIntoDevice(connetSocket);
                     }
                     isConnected = true;
                     ConnectCount = 0;
@@ -68,54 +71,73 @@ public class ConnectModbus {
 
     /**
      * 远程连接需要向设备写入数据
-     * @param socket
      * @throws IOException
      */
-    private static void writeIntoDevice(final Socket socket) throws IOException{
-        if(null != socket && !socket.isClosed()) {
-            // 获取Socket的OutputStream对象用于发送数据。
-            OutputStream outputStream = socket.getOutputStream();
-            // 写入设备ID号123456 ,命令：011007CE0002040001E24040D3
-            byte buffer1[] = new byte[11];
-            buffer1[0] = 0x01;
-            buffer1[1] = 0x10;
-            buffer1[2] = 0x07;
-            buffer1[3] = (byte)0xCE;
-            buffer1[4] = 0x00;
-            buffer1[5] = 0x02;
+    public static void writeIntoDevice(final ModbusResponseListner responseListner, final String deviceID) throws IOException{
+        new Thread(){
+            public void run() {
+                try {
+                    byte buffer[] = new byte[1024];
+                    if (null != MyApp.socket && !MyApp.socket.isClosed()) {
+                        // 获取Socket的OutputStream对象用于发送数据。
+                        OutputStream outputStream = MyApp.socket.getOutputStream();
+                        // 命令：011007CE0002040001E24040D3
+                        byte buffer1[] = new byte[11];
+                        buffer1[0] = 0x01;
+                        buffer1[1] = 0x10;
+                        buffer1[2] = 0x07;
+                        buffer1[3] = (byte) 0xCE;
+                        buffer1[4] = 0x00;
+                        buffer1[5] = 0x02;
+                        buffer1[6] = 0x04;
 
-            buffer1[6] = 0x04;
-            buffer1[7] = 0x00;
-            buffer1[8] = 0x01;
-            buffer1[9] = (byte)0xE2;
-            buffer1[10] = 0x40;
-//            buffer1[11] = 0x40;
-//            buffer1[12] = (byte)0xD3;
+                        // 写入设备ID号123456
+                        byte[] deviceByte = intToByteArray(Integer.valueOf(deviceID));
+//            buffer1[7] = 0x00;
+//            buffer1[8] = 0x01;
+//            buffer1[9] = (byte)0xE2;
+//            buffer1[10] = 0x40;
+                        buffer1[7] = deviceByte[0];
+                        buffer1[8] = deviceByte[1];
+                        buffer1[9] = deviceByte[2];
+                        buffer1[10] = deviceByte[3];
 
-            byte[] requestData = setSubmitRequestData(buffer1);
-            outputStream.write(requestData);
-            // 发送读取的数据到服务端
-            outputStream.flush();
+                        byte[] requestData = setSubmitRequestData(buffer1);
+                        outputStream.write(requestData);
+                        // 发送读取的数据到服务端
+                        outputStream.flush();
 
-            // 创建一个InputStream用户读取要发送的文件。
-            InputStream inputStream = socket.getInputStream();
-            byte buffer[] = new byte[4 * 1024];
-            inputStream.read(buffer);
+                        // 创建一个InputStream用户读取要发送的文件。
+                        InputStream inputStream = MyApp.socket.getInputStream();
+                        inputStream.read(buffer);
 
-        }
+                        responseListner.getResponseData(buffer);
+                    }
+                } catch (IOException e) {
+                    Log.d("ConnectModbus", "设备连接失败");
+                    e.printStackTrace();
+                    isConnected = false;
+                    if(3 >= ConnectCount) {
+                        connectSocket(false);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 
     /**
      * 连接modbus
      */
-    public static void connectServerWithTCPSocket(final Socket socket, final byte[] requestOriginaldata,
+    public static void connectServerWithTCPSocket(final byte[] requestOriginaldata,
                                                   final ModbusResponseListner responseListner) {
         new Thread(){
             public void run() {
                 try {
-                    if(null != connetSocket && !connetSocket.isClosed()) {
+                    if(null != MyApp.socket && !MyApp.socket.isClosed()) {
                         // 获取Socket的OutputStream对象用于发送数据。
-                        OutputStream outputStream = connetSocket.getOutputStream();
+                        OutputStream outputStream = MyApp.socket.getOutputStream();
                         // 把数据写入到OuputStream对象中
                         byte[] requestData = setRequestData(requestOriginaldata);
                         outputStream.write(requestData);
@@ -123,7 +145,7 @@ public class ConnectModbus {
                         outputStream.flush();
 
                         // 创建一个InputStream用户读取要发送的文件。
-                        InputStream inputStream = connetSocket.getInputStream();
+                        InputStream inputStream = MyApp.socket.getInputStream();
                         byte buffer[] = new byte[4 * 1024];
                         inputStream.read(buffer);
 
@@ -140,7 +162,7 @@ public class ConnectModbus {
                     if(3 >= ConnectCount) {
                         connectSocket(true);
                         if (isConnected) {
-                            connectServerWithTCPSocket(connetSocket, requestOriginaldata, responseListner);
+                            connectServerWithTCPSocket(requestOriginaldata, responseListner);
                         }
                     }
                 }
@@ -151,22 +173,22 @@ public class ConnectModbus {
     /**
      * 历史曲线获取补偿前和后的数据
      */
-    public static void connectServerGetHistory(final Socket socket, final byte[] requestOriginaldata1,final byte[] requestOriginaldata2,
+    public static void connectServerGetHistory(final byte[] requestOriginaldata1,final byte[] requestOriginaldata2,
                                                   final HistoryResponseListner responseListner) {
         new Thread(){
             public void run() {
                 try {
-                    if(null != connetSocket && !connetSocket.isClosed()) {
+                    if(null != MyApp.socket && !MyApp.socket.isClosed()) {
                         // 获取Socket的OutputStream对象用于发送数据。
-                        OutputStream outputStream = connetSocket.getOutputStream();
+                        OutputStream outputStream = MyApp.socket.getOutputStream();
                         // 补偿前
                         byte[] requestData1 = setRequestData(requestOriginaldata1);
                         outputStream.write(requestData1);
                         // 发送读取的数据到服务端
                         outputStream.flush();
                         // 创建一个InputStream用户读取要发送的文件。
-                        InputStream inputStream = connetSocket.getInputStream();
-                        byte buffer[] = new byte[4 * 1024];
+                        InputStream inputStream = MyApp.socket.getInputStream();
+                        byte buffer[] = new byte[1 * 1024];
                         inputStream.read(buffer);
 
                         // 补偿后
@@ -175,7 +197,7 @@ public class ConnectModbus {
                         // 发送读取的数据到服务端
                         outputStream.flush();
                         // 创建一个InputStream用户读取要发送的文件。
-                        byte buffer2[] = new byte[4 * 1024];
+                        byte buffer2[] = new byte[1 * 1024];
                         inputStream.read(buffer2);
 
                         // 因为获取到的是十进制，这里需要转换成16进制
@@ -194,7 +216,72 @@ public class ConnectModbus {
                     if(3 >= ConnectCount) {
                         connectSocket(true);
                         if (isConnected) {
-                            connectServerGetHistory(connetSocket, requestOriginaldata1, requestOriginaldata2, responseListner);
+                            connectServerGetHistory(requestOriginaldata1, requestOriginaldata2, responseListner);
+                        }
+                    }
+                }
+            }
+        }.start();
+    }
+
+    /**
+     * 历史曲线获取ABC的数据
+     */
+    public static void connectServerGetHistoryABC(final Socket socket, final byte[] requestOriginaldata1,
+                                                  final byte[] requestOriginaldata2, final byte[] requestOriginaldata3,
+                                               final HistoryResponseListner responseListner) {
+        new Thread(){
+            public void run() {
+                try {
+                    if(null != MyApp.socket && !MyApp.socket.isClosed()) {
+                        // 获取Socket的OutputStream对象用于发送数据。
+                        OutputStream outputStream = MyApp.socket.getOutputStream();
+                        // A
+                        byte[] requestData1 = setSubmitRequestData(requestOriginaldata1);
+                        outputStream.write(requestData1);
+                        // 发送读取的数据到服务端
+                        outputStream.flush();
+                        // 创建一个InputStream用户读取要发送的文件。
+                        InputStream inputStream = MyApp.socket.getInputStream();
+                        byte buffer[] = new byte[1 * 1024];
+                        inputStream.read(buffer);
+
+                        // B
+                        byte[] requestData2 = setSubmitRequestData(requestOriginaldata2);
+                        outputStream.write(requestData2);
+                        // 发送读取的数据到服务端
+                        outputStream.flush();
+                        // 创建一个InputStream用户读取要发送的文件。
+                        byte buffer2[] = new byte[1 * 1024];
+                        inputStream.read(buffer2);
+
+                        // C
+                        byte[] requestData3 = setRequestData(requestOriginaldata3);
+                        outputStream.write(requestData3);
+                        // 发送读取的数据到服务端
+                        outputStream.flush();
+                        // 创建一个InputStream用户读取要发送的文件。
+                        byte buffer3[] = new byte[1 * 1024];
+                        inputStream.read(buffer3);
+
+                        // 因为获取到的是十进制，这里需要转换成16进制
+                        // 01 03 10 45 7a 28 0a  45 a0 39 5e  3e 45 f1 8c 00 00 00 00 21 db
+                        Map<String, byte[]> map = new ArrayMap<>();
+                        map.put("data1", buffer);
+                        map.put("data2", buffer2);
+                        map.put("data3", buffer3);
+                        responseListner.getResponseData(map);
+                    }
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    Log.d("ConnectModbus", "设备没有连接");
+                    e.printStackTrace();
+                    isConnected = false;
+                    if(3 >= ConnectCount) {
+                        connectSocket(true);
+                        if (isConnected) {
+                            connectServerGetHistory(requestOriginaldata1, requestOriginaldata2, responseListner);
                         }
                     }
                 }
@@ -205,14 +292,14 @@ public class ConnectModbus {
     /**
      * 提交报文
      */
-    public static void submitDataWithTCPSocket(final Socket socket, final byte[] requestOriginaldata,
+    public static void submitDataWithTCPSocket(final byte[] requestOriginaldata,
                                                   final ModbusResponseListner responseListner) {
         new Thread(){
             public void run() {
                 try {
-                    if(null != connetSocket && !connetSocket.isClosed()) {
+                    if(null != MyApp.socket && !MyApp.socket.isClosed()) {
                         // 获取Socket的OutputStream对象用于发送数据。
-                        OutputStream outputStream = connetSocket.getOutputStream();
+                        OutputStream outputStream = MyApp.socket.getOutputStream();
                         // 把数据写入到OuputStream对象中
                         byte[] requestData = setSubmitRequestData(requestOriginaldata);
                         outputStream.write(requestData);
@@ -220,7 +307,7 @@ public class ConnectModbus {
                         outputStream.flush();
 
                         // 创建一个InputStream用户读取要发送的文件。
-                        InputStream inputStream = connetSocket.getInputStream();
+                        InputStream inputStream = MyApp.socket.getInputStream();
                         byte buffer[] = new byte[4 * 1024];
                         inputStream.read(buffer);
 
@@ -238,7 +325,52 @@ public class ConnectModbus {
                     if(3 >= ConnectCount) {
                         connectSocket(true);
                         if (isConnected) {
-                            submitDataWithTCPSocket(connetSocket, requestOriginaldata, responseListner);
+                            submitDataWithTCPSocket(requestOriginaldata, responseListner);
+                        }
+                    }
+                }
+            }
+        }.start();
+    }
+
+    /**
+     * 提交报文
+     */
+    public static void submitDataWithThree(final byte[] requestOriginaldata,final byte[] requestOriginaldata1,
+                                           final byte[] requestOriginaldata2,
+                                               final ModbusResponseListner responseListner) {
+        new Thread(){
+            public void run() {
+                try {
+                    if(null != MyApp.socket && !MyApp.socket.isClosed()) {
+                        // 获取Socket的OutputStream对象用于发送数据。
+                        OutputStream outputStream = MyApp.socket.getOutputStream();
+                        // 把数据写入到OuputStream对象中
+                        byte[] requestData = setSubmitRequestData(requestOriginaldata);
+                        outputStream.write(requestData);
+                        // 发送读取的数据到服务端
+                        outputStream.flush();
+
+                        // 创建一个InputStream用户读取要发送的文件。
+                        InputStream inputStream = MyApp.socket.getInputStream();
+                        byte buffer[] = new byte[4 * 1024];
+                        inputStream.read(buffer);
+
+                        // 因为获取到的是十进制，这里需要转换成16进制
+                        // 01 03 10 45 7a 28 0a  45 a0 39 5e  3e 45 f1 8c 00 00 00 00 21 db
+                        responseListner.getSubmitResponseData(buffer);
+                    }
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    Log.d("ConnectModbus", "设备没有连接");
+                    e.printStackTrace();
+
+                    isConnected = false;
+                    if(3 >= ConnectCount) {
+                        connectSocket(true);
+                        if (isConnected) {
+                            submitDataWithTCPSocket(requestOriginaldata, responseListner);
                         }
                     }
                 }
@@ -1394,10 +1526,14 @@ public class ConnectModbus {
         if(null == str || "".equals(str)){
             str = "0";
         }
-        if("fudian".equals(editText.getTag().toString())){
-            data = floatToByte(Float.valueOf(str));
-        } else if("wufuhao".equals(editText.getTag().toString())){
-            data = intToByteArray(Integer.valueOf(str));
+        try {
+            if ("fudian".equals(editText.getTag().toString())) {
+                data = floatToByte(Float.valueOf(str));
+            } else if ("wufuhao".equals(editText.getTag().toString())) {
+                data = intToByteArray(Integer.valueOf(str));
+            }
+        }catch (NumberFormatException e){
+            e.printStackTrace();
         }
         return data;
     }

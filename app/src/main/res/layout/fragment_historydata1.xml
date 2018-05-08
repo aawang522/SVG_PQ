@@ -22,25 +22,25 @@
         android:orientation="horizontal">
 
         <RadioButton
-            android:id="@+id/rbAX1"
+            android:id="@+id/rbBCQ1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="A相电流"
+            android:text="补偿前：A相、B相、C相电流"
             android:checked="true"/>
 
         <RadioButton
-            android:id="@+id/rbBX1"
+            android:id="@+id/rbBCH1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="B相电流" />
+            android:layout_marginRight="50dp"
+            android:text="补偿后：A相、B相、C相电流" />
 
-        <RadioButton
+        <!--<RadioButton
             android:id="@+id/rbCX1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="C相电流" />
+            android:text="C相电流" />-->
 
         <RadioButton
             android:id="@+id/rbGLYS1"

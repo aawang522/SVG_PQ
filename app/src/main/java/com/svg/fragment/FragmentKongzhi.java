@@ -94,7 +94,7 @@ public class FragmentKongzhi extends Fragment implements ModbusResponseListner, 
         responseListner = this;
         handler = new Handler(this);
         // 调用连接modbus函数
-        ConnectModbus.submitDataWithTCPSocket(MyApp.socket, setSubmitRequestData(), responseListner);
+        ConnectModbus.submitDataWithTCPSocket(setSubmitRequestData(), responseListner);
     }
 
     /**

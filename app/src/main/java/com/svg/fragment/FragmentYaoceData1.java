@@ -41,8 +41,8 @@ public class FragmentYaoceData1 extends Fragment implements ModbusResponseListne
     private TextView yaoce_bxwcdl;
     private TextView yaoce_cxxwcdl;
 
-    private ModbusResponseListner responseListner;
     private List<TextView> textList = new ArrayList<>();
+    private ModbusResponseListner responseListner;
     private Handler handler;
 
     @Override
@@ -106,7 +106,7 @@ public class FragmentYaoceData1 extends Fragment implements ModbusResponseListne
         // 设置请求报文
         byte[] requestOriginalData = setRequestData();
         // 调用连接modbus函数
-        ConnectModbus.connectServerWithTCPSocket(MyApp.socket, requestOriginalData, responseListner);
+        ConnectModbus.connectServerWithTCPSocket(requestOriginalData, responseListner);
     }
 
     /**
@@ -153,10 +153,28 @@ public class FragmentYaoceData1 extends Fragment implements ModbusResponseListne
             case 101:
                 List<Float> dataList = new ArrayList<>();
                 dataList = ConnectModbus.from32Fudian((byte[])msg.obj);
-                if(null != dataList && 0 < dataList.size()) {
-                    for (int i = 0; i < textList.size(); i++) {
-                        if (null != textList.get(i) && i < textList.size()) {
+                int length = 0;
+                if(null != dataList && null != textList) {
+                    if (dataList.size() < textList.size()) {
+                        length = dataList.size();
+                    } else {
+                        length = textList.size();
+                    }
+                    for (int i = 0; i < length; i++) {
+                        if (null != textList.get(i)) {
                             textList.get(i).setText(String.valueOf(dataList.get(i)));
+                        }
+                    }
+                    if (null != dataList && 0 < dataList.size()) {
+                        for (int i = 0; i < textList.size(); i++) {
+                            if (null != textList.get(i) && i < textList.size()) {
+                                try {
+                                    textList.get(i).setText(String.valueOf(dataList.get(i)));
+                                } catch (IndexOutOfBoundsException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
                         }
                     }
                 }

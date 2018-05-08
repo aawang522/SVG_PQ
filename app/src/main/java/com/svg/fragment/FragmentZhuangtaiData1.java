@@ -69,7 +69,7 @@ public class FragmentZhuangtaiData1 extends Fragment implements ModbusResponseLi
         // 设置请求报文
         byte[] requestOriginalData = setRequestData();
         // 调用连接modbus函数
-        ConnectModbus.connectServerWithTCPSocket(MyApp.socket, requestOriginalData, responseListner);
+        ConnectModbus.connectServerWithTCPSocket(requestOriginalData, responseListner);
     }
 
     /**

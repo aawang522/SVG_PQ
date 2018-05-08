@@ -227,7 +227,7 @@ public class FragmentYaotiaoData6 extends Fragment implements ModbusResponseList
         // 设置请求报文
         byte[] requestOriginalData = setRequestData();
         // 调用连接modbus函数
-        ConnectModbus.connectServerWithTCPSocket(MyApp.socket, requestOriginalData, responseListner);
+        ConnectModbus.connectServerWithTCPSocket(requestOriginalData, responseListner);
     }
 
     /**
@@ -235,7 +235,7 @@ public class FragmentYaotiaoData6 extends Fragment implements ModbusResponseList
      */
     private void submitData(){
         // 调用连接modbus函数
-        ConnectModbus.submitDataWithTCPSocket(MyApp.socket, submitBytes, responseListner);
+        ConnectModbus.submitDataWithTCPSocket(submitBytes, responseListner);
     }
 
     /**

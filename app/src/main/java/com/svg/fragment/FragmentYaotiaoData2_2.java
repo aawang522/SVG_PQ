@@ -16,7 +16,6 @@ import com.luoshihai.xxdialog.DialogViewHolder;
 import com.luoshihai.xxdialog.XXDialog;
 import com.svg.ConnectModbus;
 import com.svg.R;
-import com.svg.common.MyApp;
 import com.svg.utils.CommUtil;
 import com.svg.utils.ModbusResponseListner;
 
@@ -27,24 +26,21 @@ import java.util.List;
  * 遥调数据2
  * Created by aawang on 2017/3/24.
  */
-public class FragmentYaotiaoData2 extends Fragment implements ModbusResponseListner, Handler.Callback, View.OnClickListener {
-
-    private EditText yaotiao_dyycddy;
-    private EditText yaotiao_xb1mbz;
-    private EditText yaotiao_xb2mbz;
-    private EditText yaotiao_xb3mbz;
-    private EditText yaotiao_xb4mbz;
-    private EditText yaotiao_xb5mbz;
-    private EditText yaotiao_xb6mbz;
-    private EditText yaotiao_xb7mbz;
-    private EditText yaotiao_xb8mbz;
-    private EditText yaotiao_xb9mbz;
-    private EditText yaotiao_xb10mbz;
-    private EditText yaotiao_xb11mbz;
-    private EditText yaotiao_xb12mbz;
-    private EditText yaotiao_xb13mbz;
-    private EditText yaotiao_xb1cs;
-    private Button btn_data2commit;
+public class FragmentYaotiaoData2_2 extends Fragment implements ModbusResponseListner, Handler.Callback, View.OnClickListener {
+    private EditText yaotiao_xb1sn;
+    private EditText yaotiao_xb2sn;
+    private EditText yaotiao_xb3sn;
+    private EditText yaotiao_xb4sn;
+    private EditText yaotiao_xb5sn;
+    private EditText yaotiao_xb6sn;
+    private EditText yaotiao_xb7sn;
+    private EditText yaotiao_xb8sn;
+    private EditText yaotiao_xb9sn;
+    private EditText yaotiao_xb10sn;
+    private EditText yaotiao_xb11sn;
+    private EditText yaotiao_xb12sn;
+    private EditText yaotiao_xb13sn;
+    private Button btn_data22commit;
 
     private ModbusResponseListner responseListner;
     private List<EditText> textList = new ArrayList<>();
@@ -55,7 +51,7 @@ public class FragmentYaotiaoData2 extends Fragment implements ModbusResponseList
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_yaotiao_data2, container, false);
+        View view = inflater.inflate(R.layout.fragment_yaotiao_data2_2, container, false);
         init(view);
         return view;
     }
@@ -68,45 +64,41 @@ public class FragmentYaotiaoData2 extends Fragment implements ModbusResponseList
         responseListner = this;
         handler = new Handler(this);
 
-        yaotiao_dyycddy = (EditText)view.findViewById(R.id.yaotiao_dyycddy);
-        yaotiao_xb1mbz = (EditText)view.findViewById(R.id.yaotiao_xb1mbz);
-        yaotiao_xb2mbz = (EditText)view.findViewById(R.id.yaotiao_xb2mbz);
-        yaotiao_xb3mbz = (EditText)view.findViewById(R.id.yaotiao_xb3mbz);
-        yaotiao_xb4mbz = (EditText)view.findViewById(R.id.yaotiao_xb4mbz);
-        yaotiao_xb5mbz = (EditText)view.findViewById(R.id.yaotiao_xb5mbz);
-        yaotiao_xb6mbz = (EditText)view.findViewById(R.id.yaotiao_xb6mbz);
-        yaotiao_xb7mbz = (EditText)view.findViewById(R.id.yaotiao_xb7mbz);
-        yaotiao_xb8mbz = (EditText)view.findViewById(R.id.yaotiao_xb8mbz);
-        yaotiao_xb9mbz = (EditText)view.findViewById(R.id.yaotiao_xb9mbz);
-        yaotiao_xb10mbz = (EditText)view.findViewById(R.id.yaotiao_xb10mbz);
-        yaotiao_xb11mbz = (EditText)view.findViewById(R.id.yaotiao_xb11mbz);
-        yaotiao_xb12mbz = (EditText)view.findViewById(R.id.yaotiao_xb12mbz);
-        yaotiao_xb13mbz = (EditText)view.findViewById(R.id.yaotiao_xb13mbz);
-        yaotiao_xb1cs = (EditText)view.findViewById(R.id.yaotiao_xb1cs);
-        textList.add(yaotiao_dyycddy);
-        textList.add(yaotiao_xb1mbz);
-        textList.add(yaotiao_xb2mbz);
-        textList.add(yaotiao_xb3mbz);
-        textList.add(yaotiao_xb4mbz);
-        textList.add(yaotiao_xb5mbz);
-        textList.add(yaotiao_xb6mbz);
-        textList.add(yaotiao_xb7mbz);
-        textList.add(yaotiao_xb8mbz);
-        textList.add(yaotiao_xb9mbz);
-        textList.add(yaotiao_xb10mbz);
-        textList.add(yaotiao_xb11mbz);
-        textList.add(yaotiao_xb12mbz);
-        textList.add(yaotiao_xb13mbz);
-        textList.add(yaotiao_xb1cs);
+        yaotiao_xb1sn = (EditText)view.findViewById(R.id.yaotiao2_xb1sn);
+        yaotiao_xb2sn = (EditText)view.findViewById(R.id.yaotiao2_xb2sn);
+        yaotiao_xb3sn = (EditText)view.findViewById(R.id.yaotiao2_xb3sn);
+        yaotiao_xb4sn = (EditText)view.findViewById(R.id.yaotiao2_xb4sn);
+        yaotiao_xb5sn = (EditText)view.findViewById(R.id.yaotiao2_xb5sn);
+        yaotiao_xb6sn = (EditText)view.findViewById(R.id.yaotiao2_xb6sn);
+        yaotiao_xb7sn = (EditText)view.findViewById(R.id.yaotiao2_xb7sn);
+        yaotiao_xb8sn = (EditText)view.findViewById(R.id.yaotiao2_xb8sn);
+        yaotiao_xb9sn = (EditText)view.findViewById(R.id.yaotiao2_xb9sn);
+        yaotiao_xb10sn = (EditText)view.findViewById(R.id.yaotiao2_xb10sn);
+        yaotiao_xb11sn = (EditText)view.findViewById(R.id.yaotiao2_xb11sn);
+        yaotiao_xb12sn = (EditText)view.findViewById(R.id.yaotiao2_xb12sn);
+        yaotiao_xb13sn = (EditText)view.findViewById(R.id.yaotiao2_xb13sn);
+        textList.add(yaotiao_xb1sn);
+        textList.add(yaotiao_xb2sn);
+        textList.add(yaotiao_xb3sn);
+        textList.add(yaotiao_xb4sn);
+        textList.add(yaotiao_xb5sn);
+        textList.add(yaotiao_xb6sn);
+        textList.add(yaotiao_xb7sn);
+        textList.add(yaotiao_xb8sn);
+        textList.add(yaotiao_xb9sn);
+        textList.add(yaotiao_xb10sn);
+        textList.add(yaotiao_xb11sn);
+        textList.add(yaotiao_xb12sn);
+        textList.add(yaotiao_xb13sn);
 
-        btn_data2commit = (Button) view.findViewById(R.id.btn_data2commit);
-        btn_data2commit.setOnClickListener(this);
+        btn_data22commit = (Button) view.findViewById(R.id.btn_data22commit);
+        btn_data22commit.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v){
         switch (v.getId()){
-            case R.id.btn_data2commit:
+            case R.id.btn_data22commit:
                 showSubmitDialog();
                 break;
         }
@@ -133,15 +125,15 @@ public class FragmentYaotiaoData2 extends Fragment implements ModbusResponseList
      */
     private byte[] setRequestData(){
         // 01 03 07 D0 00 08 81 44
-        // 01设备号；03读；08B6是起始位2230的十六进制；001E是30的十六进制，相当于获取15个数
+        // 01设备号；03读；08EC是起始位2290的十六进制；001A是26的十六进制，相当于获取13个数
         // 创建一个byte类型的buffer字节数组，用于存放询问报文
         byte buffer1[] = new byte[6];
         buffer1[0] = 0x01;
         buffer1[1] = 0x03;
         buffer1[2] = 0x08;
-        buffer1[3] = (byte)0xB6;
+        buffer1[3] = (byte)0xEC;
         buffer1[4] = 0x00;
-        buffer1[5] = 0x1E;
+        buffer1[5] = 0x1A;
         return buffer1;
     }
 
@@ -151,16 +143,16 @@ public class FragmentYaotiaoData2 extends Fragment implements ModbusResponseList
      */
     private byte[] setSubmitRequestData(){
         // 01 03 07 D0 00 08 81 44
-        // 01设备号；10写；08B6是起始位2200的十六进制；15个数，30个字(0x001E)，60个字节数(0x3C)
+        // 01设备号；10写；08B6是起始位2200的十六进制；13个数，26个字(0x001A)，52个字节数(0x34)
         // 创建一个byte类型的buffer字节数组，用于存放询问报文
         byte buffer1[] = new byte[67];
         buffer1[0] = 0x01;
         buffer1[1] = 0x10;
         buffer1[2] = 0x08;
-        buffer1[3] = (byte)0xB6;
+        buffer1[3] = (byte)0xEC;
         buffer1[4] = 0x00;
-        buffer1[5] = 0x1E;
-        buffer1[6] = 0x3C;
+        buffer1[5] = 0x1A;
+        buffer1[6] = 0x34;
 
         for (int i =0;i<textList.size();i++){
             byte[] bytes = ConnectModbus.dataToByteArray(textList.get(i));
@@ -179,7 +171,7 @@ public class FragmentYaotiaoData2 extends Fragment implements ModbusResponseList
     @Override
     public void getResponseData(byte[] data) {
         Message message = new Message();
-        message.what = 1002;
+        message.what = 1202;
         message.obj = data;
         handler.sendMessage(message);
     }
@@ -191,7 +183,7 @@ public class FragmentYaotiaoData2 extends Fragment implements ModbusResponseList
     @Override
     public void getSubmitResponseData(byte[] data) {
         Message message = new Message();
-        message.what = 1012;
+        message.what = 1212;
         message.obj = data;
         handler.sendMessage(message);
     }
@@ -199,16 +191,16 @@ public class FragmentYaotiaoData2 extends Fragment implements ModbusResponseList
     @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what){
-            case 1002:
+            case 1202:
                 List<String> dataList = new ArrayList<>();
-                dataList = ConnectModbus.parsing_YaoTiaoData2((byte[])msg.obj);
+                dataList = parsing_YaoTiaoData2((byte[])msg.obj);
                 for (int i = 0; i<textList.size();i++){
                     if(null != textList.get(i)) {
                         textList.get(i).setText(String.valueOf(dataList.get(i)));
                     }
                 }
                 break;
-            case 1012:
+            case 1212:
                 byte[] data = (byte[])msg.obj;
                 Toast.makeText(getContext(), "提交成功", Toast.LENGTH_SHORT).show();
                 getData();
@@ -262,5 +254,30 @@ public class FragmentYaotiaoData2 extends Fragment implements ModbusResponseList
         int width = CommUtil.getScreenWidth(getActivity()) * 3/4;
         int height = CommUtil.getScreenHeight(getActivity()) * 1/3;
         dialog.backgroundLight(0.5).setWidthAndHeight(width, height).showDialog();
+    }
+
+    /**
+     * 数据2——前面都是32位浮点数，最后一个是32位无符号数
+     * @return
+     */
+    public static List<String> parsing_YaoTiaoData2(byte[] buffer1){
+        if(ConnectModbus.checkReturnCRC(buffer1)) {
+            List<String> dataList = new ArrayList<>();
+            int dataLength = buffer1[2] / 4;
+            // 根据数据的个数，一一展示在textview中
+            for (int i = 0; i < dataLength; i++) {
+                short[] shorts = new short[4];
+                shorts[0] = (short) (0x00FF & buffer1[4 * i + 3]);
+                shorts[1] = (short) (0x00FF & buffer1[4 * i + 3 + 1]);
+                shorts[2] = (short) (0x00FF & buffer1[4 * i + 3 + 2]);
+                shorts[3] = (short) (0x00FF & buffer1[4 * i + 3 + 3]);
+
+                // 32位无符号数
+                long a = shorts[0] *0x1000000 +shorts[1]*0x10000  + shorts[2]*0x100 +shorts[3];
+                dataList.add(String.valueOf(a));
+            }
+            return dataList;
+        }
+        return null;
     }
 }

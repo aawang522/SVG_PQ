@@ -42,4 +42,8 @@
 
     <!-- 标题颜色 -->
     <color name="foot_blue">#169ADE</color>
+
+    <color name="linechart_yellow">#FFFF00</color>
+    <color name="linechart_green">#20B2AA</color>
+    <color name="linechart_red">#EE2C2C</color>
 </resources>

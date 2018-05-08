@@ -46,8 +46,15 @@ public class FragmentHistoryData3 extends Fragment implements HistoryResponseLis
     private byte start2;
     private byte after1;
     private byte after2;
+    private byte A1;
+    private byte A2;
+    private byte B1;
+    private byte B2;
+    private byte C1;
+    private byte C2;
     private String danwei;
     private byte length;
+    private boolean showThreeOrTwo = true;
 
     @Nullable
     @Override
@@ -68,48 +75,68 @@ public class FragmentHistoryData3 extends Fragment implements HistoryResponseLis
         handler = new Handler(this);
 
         // 2520
-        start1 = 0x09;
-        start2 = (byte) 0xD8;
+//        start1 = 0x09;
+//        start2 = (byte) 0xD8;
         // 2920
-        after1 = 0x0B;
-        after2 = (byte) 0x68;
+//        after1 = 0x0B;
+//        after2 = (byte) 0x68;
+        A1 = 0x09;
+        A2 = (byte) 0xD8;
+        B1 = 0x0C;
+        B2 = (byte) 0xF8;
+        C1 = 0x10;
+        C2 = 0x18;
         danwei = "A";
 
         lineChart = (LineChartInViewPager) view.findViewById(R.id.new_lineChart3);
         radioGroupEx = (RadioGroupEx)view.findViewById(R.id.rgex3);
 
-        radioGroupEx.check(R.id.rbAX3);
+        radioGroupEx.check(R.id.rbBCQ3);
         radioGroupEx.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
                 switch (checkedId){
-                    case R.id.rbAX3:
+                    case R.id.rbBCQ3:
                         // 2520
-                        start1 = 0x09;
-                        start2 = (byte) 0xD8;
-                        // 2920
-                        after1 = 0x0B;
-                        after2 = (byte) 0x68;
+//                        start1 = 0x09;
+//                        start2 = (byte) 0xD8;
+//                        // 2920
+//                        after1 = 0x0B;
+//                        after2 = (byte) 0x68;
+                        A1 = 0x09;
+                        A2 = (byte) 0xD8;
+                        B1 = 0x0C;
+                        B2 = (byte) 0xF8;
+                        C1 = 0x10;
+                        C2 = 0x18;
                         danwei = "A";
+                        showThreeOrTwo = true;
                         break;
-                    case R.id.rbBX3:
+                    case R.id.rbBCH3:
                         // 3320
-                        start1 = 0x0C;
-                        start2 = (byte) 0xF8;
-                        // 3720
-                        after1 = 0x0E;
-                        after2 = (byte) 0x88;
+//                        start1 = 0x0C;
+//                        start2 = (byte) 0xF8;
+//                        // 3720
+//                        after1 = 0x0E;
+//                        after2 = (byte) 0x88;
+                        A1 = 0x0B;
+                        A2 = (byte) 0x68;
+                        B1 = 0x0E;
+                        B2 = (byte) 0x88;
+                        C1 = 0x11;
+                        C2 = (byte) 0xA8;
                         danwei = "A";
+                        showThreeOrTwo = true;
                         break;
-                    case R.id.rbCX3:
-                        // 4120
-                        start1 = 0x10;
-                        start2 = 0x18;
-                        // 4520
-                        after1 = 0x11;
-                        after2 = (byte) 0xA8;
-                        danwei = "A";
-                        break;
+//                    case R.id.rbCX3:
+//                        // 4120
+//                        start1 = 0x10;
+//                        start2 = 0x18;
+//                        // 4520
+//                        after1 = 0x11;
+//                        after2 = (byte) 0xA8;
+//                        danwei = "A";
+//                        break;
                     case R.id.rbGLYS3:
                         // 4920
                         start1 = 0x13;
@@ -118,6 +145,7 @@ public class FragmentHistoryData3 extends Fragment implements HistoryResponseLis
                         after1 = 0x14;
                         after2 = (byte) 0xC8;
                         danwei = "%";
+                        showThreeOrTwo = false;
                         break;
                     case R.id.rbXBHL3:
                         // 5720
@@ -127,6 +155,7 @@ public class FragmentHistoryData3 extends Fragment implements HistoryResponseLis
                         after1 = 0x17;
                         after2 = (byte) 0xE8;
                         danwei = "%";
+                        showThreeOrTwo = false;
                         break;
                     case R.id.rbBPHD3:
                         // 6520
@@ -136,10 +165,15 @@ public class FragmentHistoryData3 extends Fragment implements HistoryResponseLis
                         after1 = 0x1B;
                         after2 = 0x08;
                         danwei = "%";
+                        showThreeOrTwo = false;
                         break;
                 }
                 // 获取数据
-                initData(start1, start2, after1, after2);
+                if(showThreeOrTwo) {
+                    initDataABC(A1,A2,B1,B2,C1,C2);
+                } else {
+                    initData(start1, start2, after1, after2);
+                }
             }
         });
     }
@@ -157,7 +191,22 @@ public class FragmentHistoryData3 extends Fragment implements HistoryResponseLis
         // 设置补偿后请求报文
         byte[] requestOriginalData2 = setRequestData(after1, after2);
         // 调用连接modbus函数
-        ConnectModbus.connectServerGetHistory(MyApp.socket, requestOriginalData1, requestOriginalData2, responseListner);
+        ConnectModbus.connectServerGetHistory(requestOriginalData1, requestOriginalData2, responseListner);
+    }
+
+    /**
+     * 获取ABC补偿前和补偿后的数据
+     */
+    private void initDataABC(byte A1, byte A2, byte B1, byte B2, byte C1, byte C2){
+        // 设置A请求报文
+        byte[] requestOriginalData1 = setRequestData(A1, A2);
+        // 设置B请求报文
+        byte[] requestOriginalData2 = setRequestData(B1, B2);
+        // 设置C请求报文
+        byte[] requestOriginalData3 = setRequestData(C1, C2);
+        // 调用连接modbus函数
+        ConnectModbus.connectServerGetHistoryABC(MyApp.socket, requestOriginalData1, requestOriginalData2,
+                requestOriginalData3, responseListner);
     }
 
     /**
@@ -197,8 +246,13 @@ public class FragmentHistoryData3 extends Fragment implements HistoryResponseLis
             case 3003:
                 Map<String, byte[]> map = new ArrayMap<>();
                 map = (Map<String, byte[]>)msg.obj;
-                SetLineChart.setLineData(getContext(), lineChart, map.get("data1"), map.get("data2"),
-                        danwei, SysCode.HISTYORY_DAY, length);
+                if(showThreeOrTwo) {
+                    SetLineChart.setLineDataABC(getContext(), lineChart, map.get("data1"), map.get("data2"),
+                            map.get("data3"), danwei, SysCode.HISTYORY_DAY, length);
+                } else {
+                    SetLineChart.setLineData(getContext(), lineChart, map.get("data1"), map.get("data2"),
+                            danwei, SysCode.HISTYORY_DAY, length);
+                }
                 break;
         }
         return false;
@@ -208,13 +262,23 @@ public class FragmentHistoryData3 extends Fragment implements HistoryResponseLis
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if(!hidden){
-            initData(start1, start2, after1, after2);
+            // 获取数据
+            if(showThreeOrTwo) {
+                initDataABC(A1,A2,B1,B2,C1,C2);
+            } else {
+                initData(start1, start2, after1, after2);
+            }
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        initData(start1, start2, after1, after2);
+        // 获取数据
+        if(showThreeOrTwo) {
+            initDataABC(A1,A2,B1,B2,C1,C2);
+        } else {
+            initData(start1, start2, after1, after2);
+        }
     }
 }

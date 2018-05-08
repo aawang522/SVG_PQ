@@ -81,13 +81,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         } else if (TextUtils.isEmpty(phoneNum) || TextUtils.isEmpty(pwd)) {
             Toast.makeText(this, "用户名和密码不能为空", Toast.LENGTH_SHORT).show();
         } else {
-            if(phoneNum.equals(SPUtils.getString(LoginActivity.this, SysCode.USER_LOGIN_XM))
-                    && pwd.equals(SPUtils.getString(LoginActivity.this, SysCode.USER_LOGIN_MM))){
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            if(phoneNum.equals(SysCode.USER_SUPERNAME)
+                    && pwd.equals(SysCode.USER_SUPERPASS)){
+                SPUtils.put(LoginActivity.this, SysCode.USER_OR_SUPPER, SysCode.LOGIN_SUPPER);
+                Intent intent = new Intent(LoginActivity.this, DeviceActivity.class);
                 startActivity(intent);
                 finish();
             } else {
-                Toast.makeText(this, "用户名和密码不正确", Toast.LENGTH_SHORT).show();
+                if (phoneNum.equals(SPUtils.getString(LoginActivity.this, SysCode.USER_LOGIN_XM))
+                        && pwd.equals(SPUtils.getString(LoginActivity.this, SysCode.USER_LOGIN_MM))) {
+                    SPUtils.put(LoginActivity.this, SysCode.USER_OR_SUPPER, SysCode.LOGIN_USER);
+                    Intent intent = new Intent(LoginActivity.this, DeviceActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(this, "用户名和密码不正确", Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
