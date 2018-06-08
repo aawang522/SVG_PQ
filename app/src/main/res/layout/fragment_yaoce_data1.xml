@@ -30,7 +30,7 @@
                 />
             <TextView
                 style="@style/textDanwei"
-                android:text="W"/>
+                android:text="KW"/>
         </LinearLayout>
         <ImageView
             style="@style/Line_horizontal"/>
@@ -47,7 +47,7 @@
                 />
             <TextView
                 style="@style/textDanwei"
-                android:text="Var"/>
+                android:text="kVar"/>
         </LinearLayout>
         <ImageView
             style="@style/Line_horizontal"/>

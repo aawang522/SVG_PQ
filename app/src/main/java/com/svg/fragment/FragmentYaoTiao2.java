@@ -27,6 +27,7 @@ public class FragmentYaoTiao2 extends Fragment  {
     private FragmentManager fragmentManager;
     private FragmentYaotiaoData2_1 fg1;
     private FragmentYaotiaoData2_2 fg2;
+    private FragmentKongzhi fg3;
 
     @Nullable
     @Override
@@ -56,11 +57,13 @@ public class FragmentYaoTiao2 extends Fragment  {
         // tab标题栏添加文字
         mTitles.add("数据1");
         mTitles.add("数据2");
+        mTitles.add("控制");
         //设置tablayout模式
         mTab.setTabMode(TabLayout.MODE_FIXED);
         //tablayout获取集合中的名称
         mTab.addTab(mTab.newTab().setText(mTitles.get(0)));
         mTab.addTab(mTab.newTab().setText(mTitles.get(1)));
+        mTab.addTab(mTab.newTab().setText(mTitles.get(2)));
         setChioceItem(0);
         mTab.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -105,6 +108,14 @@ public class FragmentYaoTiao2 extends Fragment  {
                     fragmentTransaction.show(fg2);
                 }
                 break;
+            case 2:
+                if (fg3 == null) {
+                    fg3 = new FragmentKongzhi();
+                    fragmentTransaction.add(R.id.yaotiao_fragment_container, fg3);
+                } else {
+                    fragmentTransaction.show(fg3);
+                }
+                break;
         }
         fragmentTransaction.commit(); // 提交
     }
@@ -119,6 +130,9 @@ public class FragmentYaoTiao2 extends Fragment  {
         }
         if (fg2 != null) {
             fragmentTransaction.hide(fg2);
+        }
+        if (fg3 != null) {
+            fragmentTransaction.hide(fg3);
         }
     }
 

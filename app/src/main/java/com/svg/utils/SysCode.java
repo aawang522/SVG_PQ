@@ -6,8 +6,8 @@ package com.svg.utils;
  */
 
 public class SysCode {
-    public static final String DATATYPE_32FUDIAN = "32fudian";
-    public static final String DATATYPE_32WUFUHAO = "32wufuhao";
+    public static final String DEVICE_WIFI = "192.168.1.1";
+    public static final String DEVICE_NETWORK = "218.2.153.198";
     public static final String DATATYPE_16WUFUHAO = "16wufuhao";
     public static final String DATATYPE_3WEI = "wei";
 

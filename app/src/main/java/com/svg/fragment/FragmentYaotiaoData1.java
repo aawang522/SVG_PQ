@@ -1,17 +1,14 @@
 package com.svg.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -19,10 +16,8 @@ import com.luoshihai.xxdialog.DialogViewHolder;
 import com.luoshihai.xxdialog.XXDialog;
 import com.svg.ConnectModbus;
 import com.svg.R;
-import com.svg.common.MyApp;
 import com.svg.utils.CommUtil;
 import com.svg.utils.ModbusResponseListner;
-import com.svg.utils.SysCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -205,9 +200,11 @@ public class FragmentYaotiaoData1 extends Fragment implements ModbusResponseList
             case 1001:
                 List<String> dataList = new ArrayList<>();
                 dataList = ConnectModbus.parsing_YaoTiaoData1((byte[])msg.obj);
-                for (int i = 0; i<textList.size();i++){
-                    if(null != textList.get(i)) {
-                        textList.get(i).setText(String.valueOf(dataList.get(i)));
+                if (null != dataList && 0 < dataList.size()) {
+                    for (int i = 0; i < textList.size(); i++) {
+                        if (null != textList.get(i)) {
+                            textList.get(i).setText(String.valueOf(dataList.get(i)));
+                        }
                     }
                 }
                 break;

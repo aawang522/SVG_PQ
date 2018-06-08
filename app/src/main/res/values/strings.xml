@@ -30,23 +30,23 @@
     <string name="yaoce_caxdythd">CA线电压thd：</string>
     <string name="yaoce_axzldy">A相直流电压：</string>
     <string name="yaoce_dlbphd">电流不平衡度：</string>
-    <string name="yaoce_axwcdl">a相网测电流：</string>
-    <string name="yaoce_bxwcdl">b相网测电流：</string>
-    <string name="yaoce_cxxwcdl">c相网测电流：</string>
+    <string name="yaoce_axwcdl">A相网侧电流：</string>
+    <string name="yaoce_bxwcdl">B相网侧电流：</string>
+    <string name="yaoce_cxxwcdl">C相网侧电流：</string>
 
     <!-- 遥测数据2 -->
     <string name="yaoce_zxwcdl">中相网测电流：</string>
-    <string name="yaoce_axwcjbdl">a相网测基波电流：</string>
-    <string name="yaoce_bxwcjbdl">b相网测基波电流：</string>
-    <string name="yaoce_cxwcjbdl">c相网测基波电流：</string>
-    <string name="yaoce_zxwcjbdl">中相网测基波电流：</string>
-    <string name="yaoce_axwcdlthd">a相网测电流thd：</string>
-    <string name="yaoce_bxwcdlthd">b相网测电流thd：</string>
-    <string name="yaoce_cxwcdlthd">c相网测电流thd：</string>
+    <string name="yaoce_axwcjbdl">A相网侧基波电流：</string>
+    <string name="yaoce_bxwcjbdl">B相网侧基波电流：</string>
+    <string name="yaoce_cxwcjbdl">C相网侧基波电流：</string>
+    <string name="yaoce_zxwcjbdl">中相网侧基波电流：</string>
+    <string name="yaoce_axwcdlthd">A相网侧电流thd：</string>
+    <string name="yaoce_bxwcdlthd">B相网侧电流thd：</string>
+    <string name="yaoce_cxwcdlthd">C相网侧电流thd：</string>
     <string name="yaoce_zxwcdlthd">中相网测电流thd：</string>
-    <string name="yaoce_axnbqdl">a相逆变器电流：</string>
-    <string name="yaoce_bxnbqdl">b相逆变器电流：</string>
-    <string name="yaoce_cxnbqdl">c相逆变器电流：</string>
+    <string name="yaoce_axnbqdl">A相逆变器电流：</string>
+    <string name="yaoce_bxnbqdl">B相逆变器电流：</string>
+    <string name="yaoce_cxnbqdl">C相逆变器电流：</string>
     <string name="yaoce_axdywd">A相单元温度：</string>
     <string name="yaoce_bxdywd">B相单元温度：</string>
     <string name="yaoce_cxdywd">C相单元温度：</string>
@@ -156,9 +156,9 @@
     <string name="yaotiao_1gbrl">1#共补容量：</string>
     <string name="yaotiao_2gbrl">2#共补容量：</string>
     <string name="yaotiao_3gbrl">3#共补容量：</string>
-    <string name="yaotiao_4dxfbrl">4#单相分补容量：</string>
-    <string name="yaotiao_5dxfbrl">5#单相分补容量：</string>
-    <string name="yaotiao_6dxfbrl">6#单相分补容量：</string>
+    <string name="yaotiao_4dxfbrl">4#分补容量：</string>
+    <string name="yaotiao_5dxfbrl">5#分补容量：</string>
+    <string name="yaotiao_6dxfbrl">6#分补容量：</string>
 
     <string name="edittag_fudian">fudian</string>
     <string name="edittag_wufuhao">wufuhao</string>

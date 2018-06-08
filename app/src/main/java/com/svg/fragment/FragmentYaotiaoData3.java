@@ -202,9 +202,11 @@ public class FragmentYaotiaoData3 extends Fragment implements ModbusResponseList
             case 1003:
                 List<Long> dataList = new ArrayList<>();
                 dataList = ConnectModbus.parsing32Wufuhao_YaoTiaoData3((byte[])msg.obj);
-                for (int i = 0; i<textList.size();i++){
-                    if(null != textList.get(i)) {
-                        textList.get(i).setText(String.valueOf(dataList.get(i)));
+                if (null != dataList && 0 < dataList.size()) {
+                    for (int i = 0; i < textList.size(); i++) {
+                        if (null != textList.get(i)) {
+                            textList.get(i).setText(String.valueOf(dataList.get(i)));
+                        }
                     }
                 }
                 break;

@@ -201,15 +201,17 @@ public class FragmentYaotiaoData5 extends Fragment implements ModbusResponseList
             case 1005:
                 List<String> dataList = new ArrayList<>();
                 dataList = parsing_YaoTiaoData5((byte[])msg.obj);
-                int length = 0;
-                if(dataList.size() < textList.size()){
-                    length = dataList.size();
-                } else {
-                    length = textList.size();
-                }
-                for (int i = 0; i<length;i++){
-                    if(null != textList.get(i)) {
-                        textList.get(i).setText(dataList.get(i));
+                if (null != dataList && 0 < dataList.size()) {
+                    int length = 0;
+                    if (dataList.size() < textList.size()) {
+                        length = dataList.size();
+                    } else {
+                        length = textList.size();
+                    }
+                    for (int i = 0; i < length; i++) {
+                        if (null != textList.get(i)) {
+                            textList.get(i).setText(dataList.get(i));
+                        }
                     }
                 }
                 break;

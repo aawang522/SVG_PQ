@@ -270,7 +270,7 @@ public class FragmentYaotiaoData6 extends Fragment implements ModbusResponseList
         buffer1[2] = 0x09;
         buffer1[3] = 0x14;
         buffer1[4] = 0x00;
-        buffer1[5] = 0x06;
+        buffer1[5] = 0x03;
         buffer1[6] = 0x06;
         buffer1[7] = data[3];
         buffer1[8] = data[4];
@@ -313,8 +313,10 @@ public class FragmentYaotiaoData6 extends Fragment implements ModbusResponseList
             case 1006:
                 List<Boolean> dataList = new ArrayList<>();
                 dataList = ConnectModbus.parsingWei_YaoTiaoData6((byte[])msg.obj);
-                for (int i = 0; i<textList.size();i++){
-                    textList.get(i).setChecked(dataList.get(i));
+                if (null != dataList && 0 < dataList.size()) {
+                    for (int i = 0; i < textList.size(); i++) {
+                        textList.get(i).setChecked(dataList.get(i));
+                    }
                 }
                 btn_data6commit.setEnabled(true);
                 flag = true;

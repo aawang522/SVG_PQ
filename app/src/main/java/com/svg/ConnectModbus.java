@@ -499,21 +499,25 @@ public class ConnectModbus {
 //            shorts[0] = (short) (0x00FF & buffer1[2]);
             int reactLength = returnActualLength(buffer1);
             // 为了计算crc，先将buffer1除去crc的长度赋给buffer2
-            byte buffer2[] = new byte[reactLength - 2];
-            // 先将buffer1的前面赋值给buffer2，便于计算crc
-            for (int i = 0; i < reactLength - 2; i++) {
-                buffer2[i] = buffer1[i];
-            }
+            if(reactLength > 1) {
+                byte buffer2[] = new byte[reactLength - 2];
+                // 先将buffer1的前面赋值给buffer2，便于计算crc
+                for (int i = 0; i < reactLength - 2; i++) {
+                    buffer2[i] = buffer1[i];
+                }
 
-            // 首先crc校验
-            // 先根据前面的报文计算出crc
-            String crcStr = getCRC(buffer2);
-            // 如果crc计算出来是3位，比如a56，则在前面补0
-            // 然后将计算出来的crc放在byte[]中
-            byte[] byte2 = hexStringToBytes(crcStr);
-            // 对比crc是否正确，高字节对比前一个，低字节对比后一个，crc正确，则开始解析数据
-            if (buffer1[reactLength - 2] == byte2[1] && buffer1[reactLength - 1] == byte2[0]) {
-                return reactLength;
+                // 首先crc校验
+                // 先根据前面的报文计算出crc
+                String crcStr = getCRC(buffer2);
+                // 如果crc计算出来是3位，比如a56，则在前面补0
+                // 然后将计算出来的crc放在byte[]中
+                byte[] byte2 = hexStringToBytes(crcStr);
+                // 对比crc是否正确，高字节对比前一个，低字节对比后一个，crc正确，则开始解析数据
+                if (buffer1[reactLength - 2] == byte2[1] && buffer1[reactLength - 1] == byte2[0]) {
+                    return reactLength;
+                }
+            } else {
+                return 0;
             }
         }
         return 0;

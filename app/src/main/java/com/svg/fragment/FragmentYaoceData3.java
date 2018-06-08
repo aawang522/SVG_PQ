@@ -152,9 +152,11 @@ public class FragmentYaoceData3 extends Fragment implements ModbusResponseListne
             case 103:
                 List<Float> dataList = new ArrayList<>();
                 dataList = ConnectModbus.from32Fudian((byte[])msg.obj);
-                for (int i = 0; i<textList.size();i++){
-                    if(null != textList.get(i)) {
-                        textList.get(i).setText(String.valueOf(dataList.get(i)));
+                if (null != dataList && 0 < dataList.size()) {
+                    for (int i = 0; i < textList.size(); i++) {
+                        if (null != textList.get(i)) {
+                            textList.get(i).setText(String.valueOf(dataList.get(i)));
+                        }
                     }
                 }
                 break;
