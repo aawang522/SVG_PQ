@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.InputFilter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import com.svg.ConnectModbus;
 import com.svg.R;
 import com.svg.utils.CommUtil;
 import com.svg.utils.ModbusResponseListner;
+import com.svg.utils.MoneyValueFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +51,8 @@ public class FragmentYaotiaoData1 extends Fragment implements ModbusResponseList
     private ModbusResponseListner responseListner;
     private List<EditText> textList = new ArrayList<>();
     private Handler handler;
+    private boolean isHidden = false;
+    private boolean isPaused = false;
 
     @Nullable
     @Override
@@ -56,6 +61,7 @@ public class FragmentYaotiaoData1 extends Fragment implements ModbusResponseList
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_yaotiao_data1, container, false);
         init(view);
+        getData();
         return view;
     }
 
@@ -66,6 +72,7 @@ public class FragmentYaotiaoData1 extends Fragment implements ModbusResponseList
     private void init(View view){
         responseListner = this;
         handler = new Handler(this);
+
         yaotiao_eddl = (EditText)view.findViewById(R.id.yaotiao_eddl);
         yaotiao_zxxms = (EditText)view.findViewById(R.id.yaotiao_zxxms);
         yaotiao_zlceddy = (EditText)view.findViewById(R.id.yaotiao_zlceddy);
@@ -99,6 +106,23 @@ public class FragmentYaotiaoData1 extends Fragment implements ModbusResponseList
 
         btn_data1commit = (Button) view.findViewById(R.id.btn_data1commit);
         btn_data1commit.setOnClickListener(this);
+
+        // 设置输入时小数点位数
+        yaotiao_eddl.setFilters(new InputFilter[] {new MoneyValueFilter().setDigits(1)});
+        yaotiao_zxxms.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_zlceddy.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_blts.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_ctbb.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_hebb.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_gybh1z.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_glbhz.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_glbhsj.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_glfzbh.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_scdlqx.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_scdlqxsj.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_jdbhdl.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_dygybhz.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_dyqybhz.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
     }
 
     @Override
@@ -198,6 +222,7 @@ public class FragmentYaotiaoData1 extends Fragment implements ModbusResponseList
     public boolean handleMessage(Message msg) {
         switch (msg.what){
             case 1001:
+                Log.d("dingshi",  "获取遥调1");
                 List<String> dataList = new ArrayList<>();
                 dataList = ConnectModbus.parsing_YaoTiaoData1((byte[])msg.obj);
                 if (null != dataList && 0 < dataList.size()) {
@@ -207,6 +232,7 @@ public class FragmentYaotiaoData1 extends Fragment implements ModbusResponseList
                         }
                     }
                 }
+
                 break;
             case 1011:
                 byte[] data = (byte[])msg.obj;
@@ -220,15 +246,36 @@ public class FragmentYaotiaoData1 extends Fragment implements ModbusResponseList
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
+        isHidden = hidden;
         if(!hidden){
             getData();
+        } else {
+            if(null != handler) {
+                handler.removeMessages(1001);
+                handler.removeMessages(1011);
+            }
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getData();
+        // 开屏时，判断如果是在当前界面又是刚从关屏状态过来，就继续定时更新
+        if(!isHidden && isPaused) {
+            isPaused = false;
+            getData();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // 关屏时，记录isPaused状态位，清空消息，停止定时更新
+        isPaused = true;
+        if(null != handler) {
+            handler.removeMessages(1001);
+            handler.removeMessages(1011);
+        }
     }
 
     /**

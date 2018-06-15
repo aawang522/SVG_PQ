@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.InputFilter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,7 @@ import com.svg.R;
 import com.svg.common.MyApp;
 import com.svg.utils.CommUtil;
 import com.svg.utils.ModbusResponseListner;
+import com.svg.utils.MoneyValueFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +52,8 @@ public class FragmentYaotiaoData2 extends Fragment implements ModbusResponseList
     private ModbusResponseListner responseListner;
     private List<EditText> textList = new ArrayList<>();
     private Handler handler;
+    private boolean isHidden = false;
+    private boolean isPaused = false;
 
     @Nullable
     @Override
@@ -57,6 +62,7 @@ public class FragmentYaotiaoData2 extends Fragment implements ModbusResponseList
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_yaotiao_data2, container, false);
         init(view);
+        getData();
         return view;
     }
 
@@ -101,6 +107,23 @@ public class FragmentYaotiaoData2 extends Fragment implements ModbusResponseList
 
         btn_data2commit = (Button) view.findViewById(R.id.btn_data2commit);
         btn_data2commit.setOnClickListener(this);
+
+        // 设置小数点位数
+        yaotiao_dyycddy.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_xb1mbz.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_xb2mbz.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_xb3mbz.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_xb4mbz.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_xb5mbz.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_xb6mbz.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_xb7mbz.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_xb8mbz.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_xb9mbz.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_xb10mbz.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_xb11mbz.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_xb12mbz.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_xb13mbz.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_xb1cs.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
     }
 
     @Override
@@ -200,6 +223,7 @@ public class FragmentYaotiaoData2 extends Fragment implements ModbusResponseList
     public boolean handleMessage(Message msg) {
         switch (msg.what){
             case 1002:
+                Log.d("dingshi",  "获取遥调2");
                 List<String> dataList = new ArrayList<>();
                 dataList = ConnectModbus.parsing_YaoTiaoData2((byte[])msg.obj);
                 if (null != dataList && 0 < dataList.size()) {
@@ -222,15 +246,36 @@ public class FragmentYaotiaoData2 extends Fragment implements ModbusResponseList
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
+        isHidden = hidden;
         if(!hidden){
             getData();
+        } else {
+            if(null != handler) {
+                handler.removeMessages(1002);
+                handler.removeMessages(1012);
+            }
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getData();
+        // 开屏时，判断如果是在当前界面又是刚从关屏状态过来，就继续定时更新
+        if(!isHidden && isPaused) {
+            isPaused = false;
+            getData();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // 关屏时，记录isPaused状态位，清空消息，停止定时更新
+        isPaused = true;
+        if(null != handler) {
+            handler.removeMessages(1002);
+            handler.removeMessages(1012);
+        }
     }
 
     /**

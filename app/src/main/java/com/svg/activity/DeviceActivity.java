@@ -1,9 +1,6 @@
 package com.svg.activity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -22,20 +19,11 @@ import com.svg.utils.ModbusResponseListner;
 import com.svg.utils.SPUtils;
 import com.svg.utils.SysCode;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
-import java.net.MalformedURLException;
 import java.net.Socket;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.UnknownHostException;
+import java.text.DecimalFormat;
 
 /**
  * 填写设备ID进行绑定
@@ -52,34 +40,12 @@ public class DeviceActivity extends AppCompatActivity implements View.OnClickLis
 
     static int ConnectCount = 0;
     static boolean isConnected = false;
-    private String wifiIP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device);
         initView();
-        checkWifi();
-    }
-
-    /**
-     * 检测网络
-     */
-    private void checkWifi(){
-        WifiManager wifimanage=(WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);//获取WifiManager
-        //检查wifi是否开启
-        if(!wifimanage.isWifiEnabled())  {
-            wifimanage.setWifiEnabled(true);
-        }
-        WifiInfo wifiinfo= wifimanage.getConnectionInfo();
-        wifiIP = intToIp(wifiinfo.getIpAddress());
-        //将获取的int转为真正的ip地址,参考的网上的，修改了下
-        Log.d("wifiIP", wifiIP);
-        linkService();
-    }
-
-    private String intToIp(int i){
-        return (i & 0xFF)+ "." + ((i >> 8 ) & 0xFF) + "." + ((i >> 16 ) & 0xFF) +"."+((i >> 24 ) & 0xFF );
     }
 
     private void initView(){
@@ -89,6 +55,22 @@ public class DeviceActivity extends AppCompatActivity implements View.OnClickLis
 
         responseListner = this;
         handler = new Handler(this);
+
+        linkService();
+
+//        byte[] buffer1 = new byte[4];
+//        buffer1[0] = 0x44;
+//        buffer1[1] = (byte) 0x9A;
+//        buffer1[2] = 0x52;
+//        buffer1[3] = 0x2B;
+//        // 将10进制转换成16进制
+//        StringBuilder data1Str = ConnectModbus.bytesToHexFun3(buffer1);
+//        // 将16进制单精度浮点型转换为10进制浮点型，这就是计算出来的数据
+//        Float data1 = ConnectModbus.parseHex2Float(data1Str.toString());
+
+//        DecimalFormat df = new DecimalFormat("###.00000");
+//        deviceID.setText(df.format(Float.valueOf(String.valueOf("1234.5678"))));
+
     }
 
     @Override
@@ -112,20 +94,20 @@ public class DeviceActivity extends AppCompatActivity implements View.OnClickLis
 
     private void linkService(){
         if(null == MyApp.socket || MyApp.socket.isClosed()) {
-            connectSocket();
+            connectSocket(true);
         }
     }
 
-    private void connectSocket(){
+    private void connectSocket(final boolean byWifi){
         new Thread(){
             public void run() {
                 try {
                     ConnectCount ++;
                     MyApp.socket = new Socket();
                     // 创建一个Socket对象，并指定服务端的IP及端口号
-                    if(SysCode.DEVICE_WIFI.equals(wifiIP)) {
+                    if(byWifi) {
                         // wifi热点近距离连接
-                        InetSocketAddress isa = new InetSocketAddress(SysCode.DEVICE_WIFI, 8887);
+                        InetSocketAddress isa = new InetSocketAddress("192.168.1.1", 8887);
                         MyApp.socket.connect(isa, 10000);
 
                         Intent intent = new Intent(DeviceActivity.this, MainActivity.class);
@@ -133,7 +115,7 @@ public class DeviceActivity extends AppCompatActivity implements View.OnClickLis
                         finish();
                     } else {
                         // 4G远距离连接 6000 9000
-                        InetSocketAddress isa = new InetSocketAddress(SysCode.DEVICE_NETWORK, 9000);
+                        InetSocketAddress isa = new InetSocketAddress("218.2.153.198", 9000);
                         MyApp.socket.connect(isa, 10000);
                     }
                     isConnected = true;
@@ -145,7 +127,7 @@ public class DeviceActivity extends AppCompatActivity implements View.OnClickLis
                     e.printStackTrace();
                     isConnected = false;
                     if(3 >= ConnectCount) {
-                        connectSocket();
+                        connectSocket(false);
                     } else {
                         Intent intent = new Intent(DeviceActivity.this, MainActivity.class);
                         startActivity(intent);

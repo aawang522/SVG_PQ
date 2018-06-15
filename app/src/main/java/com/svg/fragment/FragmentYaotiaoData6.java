@@ -52,6 +52,8 @@ public class FragmentYaotiaoData6 extends Fragment implements ModbusResponseList
     private byte[] submitBytes = new byte[15];
     // 标志位，false表示是在初始化展示数据，此时不用对checkbox进行监听
     private boolean flag = false;
+    private boolean isHidden = false;
+    private boolean isPaused = false;
 
     @Nullable
     @Override
@@ -61,6 +63,7 @@ public class FragmentYaotiaoData6 extends Fragment implements ModbusResponseList
         View view = inflater.inflate(R.layout.fragment_yaotiao_data6, container, false);
         init(view);
         setCheckListener();
+        getData();
         return view;
     }
 
@@ -334,15 +337,36 @@ public class FragmentYaotiaoData6 extends Fragment implements ModbusResponseList
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
+        isHidden = hidden;
         if(!hidden){
             getData();
+        } else {
+            if(null != handler) {
+                handler.removeMessages(1006);
+                handler.removeMessages(1016);
+            }
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getData();
+        // 开屏时，判断如果是在当前界面又是刚从关屏状态过来，就继续定时更新
+        if(!isHidden && isPaused) {
+            isPaused = false;
+            getData();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // 关屏时，记录isPaused状态位，清空消息，停止定时更新
+        isPaused = true;
+        if(null != handler) {
+            handler.removeMessages(1006);
+            handler.removeMessages(1016);
+        }
     }
 
     /**

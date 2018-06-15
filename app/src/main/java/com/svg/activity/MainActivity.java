@@ -2,36 +2,26 @@ package com.svg.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import com.flyco.tablayout.SlidingTabLayout;
-import com.svg.ConnectModbus;
 import com.svg.R;
-import com.svg.adapter.FragmentPagerAdapter;
 import com.svg.common.MyApp;
 import com.svg.fragment.FragmentHistory;
 import com.svg.fragment.FragmentShijian;
 import com.svg.fragment.FragmentYaoTiao;
 import com.svg.fragment.FragmentYaoTiao2;
 import com.svg.fragment.FragmentYaoce;
-import com.svg.fragment.FragmentYaoceData1;
-import com.svg.fragment.FragmentYaoceData2;
-import com.svg.fragment.FragmentYaoceData3;
-import com.svg.fragment.FragmentYaoceGonglv;
 import com.svg.fragment.FragmentZhuangtai;
+import com.svg.utils.CommUtil;
 import com.svg.utils.SPUtils;
 import com.svg.utils.SysCode;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
      * @param index
      */
     private void setChioceItem(int index) {
+        // 隐藏软键盘
+        CommUtil.hideIputKeyboard(MainActivity.this);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         hideFragments(fragmentTransaction);
         switch (index) {
@@ -168,22 +160,22 @@ public class MainActivity extends AppCompatActivity {
      * @param fragmentTransaction
      */
     private void hideFragments(FragmentTransaction fragmentTransaction) {
-        if (fg1 != null) {
+        if (null != fg1) {
             fragmentTransaction.hide(fg1);
         }
-        if (fg2 != null) {
+        if (null != fg2) {
             fragmentTransaction.hide(fg2);
         }
-        if (fg2_2 != null) {
+        if (null != fg2_2) {
             fragmentTransaction.hide(fg2_2);
         }
-        if (fg3 != null) {
+        if (null != fg3) {
             fragmentTransaction.hide(fg3);
         }
-        if (fg4 != null) {
+        if (null != fg4) {
             fragmentTransaction.hide(fg4);
         }
-        if (fg5 != null) {
+        if (null != fg5) {
             fragmentTransaction.hide(fg5);
         }
     }

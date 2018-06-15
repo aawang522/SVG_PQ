@@ -58,7 +58,8 @@
                 />
             <EditText
                 android:id="@+id/yaotiao_zlceddy"
-                style="@style/WorkInfoRightEditText_Fudianshu"/>
+                style="@style/WorkInfoRightEditText_Fudianshu"
+                android:inputType="number"/>
             <TextView
                 style="@style/textDanwei"
                 android:text="V"/>
@@ -90,7 +91,8 @@
                 />
             <EditText
                 android:id="@+id/yaotiao_ctbb"
-                style="@style/WorkInfoRightEditText_Fudianshu"/>
+                style="@style/WorkInfoRightEditText_Fudianshu"
+                android:inputType="number"/>
             <TextView
                 style="@style/textDanwei"/>
         </LinearLayout>
@@ -105,7 +107,8 @@
                 />
             <EditText
                 android:id="@+id/yaotiao_hebb"
-                style="@style/WorkInfoRightEditText_Fudianshu"/>
+                style="@style/WorkInfoRightEditText_Fudianshu"
+                android:inputType="number"/>
             <TextView
                 style="@style/textDanwei"/>
         </LinearLayout>

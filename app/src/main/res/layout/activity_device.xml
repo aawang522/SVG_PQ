@@ -41,7 +41,6 @@
                 android:layout_weight="1"
                 android:background="@drawable/bg_inputbox"
                 android:hint="请输入设备ID号"
-                android:inputType="textPassword"
                 android:padding="@dimen/dp_10"
                 android:singleLine="true"
                 android:textColor="@color/maintext_content" />

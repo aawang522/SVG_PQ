@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,9 @@ import com.luoshihai.xxdialog.DialogViewHolder;
 import com.luoshihai.xxdialog.XXDialog;
 import com.svg.ConnectModbus;
 import com.svg.R;
-import com.svg.common.MyApp;
 import com.svg.utils.CommUtil;
 import com.svg.utils.ModbusResponseListner;
+import com.svg.utils.MoneyValueFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,8 @@ public class FragmentYaotiaoData4 extends Fragment implements ModbusResponseList
     private ModbusResponseListner responseListner;
     private List<EditText> textList = new ArrayList<>();
     private Handler handler;
+    private boolean isHidden = false;
+    private boolean isPaused = false;
 
     @Nullable
     @Override
@@ -57,6 +60,7 @@ public class FragmentYaotiaoData4 extends Fragment implements ModbusResponseList
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_yaotiao_data4, container, false);
         init(view);
+        getData();
         return view;
     }
 
@@ -101,6 +105,23 @@ public class FragmentYaotiaoData4 extends Fragment implements ModbusResponseList
 
         btn_data4commit = (Button) view.findViewById(R.id.btn_data4commit);
         btn_data4commit.setOnClickListener(this);
+
+        // 设置小数点位数
+        yaotiao_xb4sn.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_xb5sn.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_xb6sn.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_xb7sn.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_xb8sn.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_xb9sn.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_xb10sn.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_xb11sn.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_xb12sn.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_xb13sn.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_yxms.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_wgbcms.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_xbbcms.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_mbglys.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(3)});
+        yaotiao_jesyys.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(3)});
     }
 
     @Override
@@ -222,15 +243,36 @@ public class FragmentYaotiaoData4 extends Fragment implements ModbusResponseList
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
+        isHidden = hidden;
         if(!hidden){
             getData();
+        } else {
+            if(null != handler) {
+                handler.removeMessages(1004);
+                handler.removeMessages(1014);
+            }
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getData();
+        // 开屏时，判断如果是在当前界面又是刚从关屏状态过来，就继续定时更新
+        if(!isHidden && isPaused) {
+            isPaused = false;
+            getData();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // 关屏时，记录isPaused状态位，清空消息，停止定时更新
+        isPaused = true;
+        if(null != handler) {
+            handler.removeMessages(1004);
+            handler.removeMessages(1014);
+        }
     }
 
     /**

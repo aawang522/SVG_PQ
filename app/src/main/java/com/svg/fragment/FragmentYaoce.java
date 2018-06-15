@@ -33,6 +33,7 @@ public class FragmentYaoce extends Fragment{
     private FragmentYaoceData1 fg1;
     private FragmentYaoceData2 fg2;
     private FragmentYaoceData3 fg3;
+    private int position = 0;
 
     @Nullable
     @Override
@@ -69,11 +70,12 @@ public class FragmentYaoce extends Fragment{
         mTab.addTab(mTab.newTab().setText(mTitles.get(0)));
         mTab.addTab(mTab.newTab().setText(mTitles.get(1)));
         mTab.addTab(mTab.newTab().setText(mTitles.get(2)));
-        setChioceItem(0);
+        setChioceItem(position);
         mTab.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                setChioceItem(tab.getPosition());
+                position = tab.getPosition();
+                setChioceItem(position);
             }
 
             @Override
@@ -97,7 +99,7 @@ public class FragmentYaoce extends Fragment{
         hideFragments(fragmentTransaction);
         switch (index) {
             case 0:
-                if (fg1 == null) {
+                if (null == fg1) {
                     fg1 = new FragmentYaoceData1();
                     fragmentTransaction.add(R.id.yaoce_fragment_container, fg1);
                 } else {
@@ -106,7 +108,7 @@ public class FragmentYaoce extends Fragment{
                 }
                 break;
             case 1:
-                if (fg2 == null) {
+                if (null == fg2) {
                     fg2 = new FragmentYaoceData2();
                     fragmentTransaction.add(R.id.yaoce_fragment_container, fg2);
                 } else {
@@ -114,7 +116,7 @@ public class FragmentYaoce extends Fragment{
                 }
                 break;
             case 2:
-                if (fg3 == null) {
+                if (null == fg3) {
                     fg3 = new FragmentYaoceData3();
                     fragmentTransaction.add(R.id.yaoce_fragment_container, fg3);
                 } else {
@@ -130,13 +132,13 @@ public class FragmentYaoce extends Fragment{
      * @param fragmentTransaction
      */
     private void hideFragments(FragmentTransaction fragmentTransaction) {
-        if (fg1 != null) {
+        if (null != fg1) {
             fragmentTransaction.hide(fg1);
         }
-        if (fg2 != null) {
+        if (null != fg2) {
             fragmentTransaction.hide(fg2);
         }
-        if (fg3 != null) {
+        if (null != fg3) {
             fragmentTransaction.hide(fg3);
         }
     }
@@ -145,15 +147,17 @@ public class FragmentYaoce extends Fragment{
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if(!hidden){
-            Log.d("fragment_yaoce", "onHiddenChanged_show");
+            setChioceItem(position);
         } else {
-            Log.d("fragment_yaoce", "onHiddenChanged_hide");
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            hideFragments(fragmentTransaction);
+            fragmentTransaction.commit(); // 提交
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("fragment_yaoce", "onResume");
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        setChioceItem(position);
+//    }
 }

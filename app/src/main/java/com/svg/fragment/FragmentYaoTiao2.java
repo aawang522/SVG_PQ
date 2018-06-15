@@ -28,6 +28,7 @@ public class FragmentYaoTiao2 extends Fragment  {
     private FragmentYaotiaoData2_1 fg1;
     private FragmentYaotiaoData2_2 fg2;
     private FragmentKongzhi fg3;
+    private int position = 0;
 
     @Nullable
     @Override
@@ -68,7 +69,8 @@ public class FragmentYaoTiao2 extends Fragment  {
         mTab.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                setChioceItem(tab.getPosition());
+                position = tab.getPosition();
+                setChioceItem(position);
             }
 
             @Override
@@ -92,7 +94,7 @@ public class FragmentYaoTiao2 extends Fragment  {
         hideFragments(fragmentTransaction);
         switch (index) {
             case 0:
-                if (fg1 == null) {
+                if (null == fg1) {
                     fg1 = new FragmentYaotiaoData2_1();
                     fragmentTransaction.add(R.id.yaotiao_fragment_container, fg1);
                 } else {
@@ -101,7 +103,7 @@ public class FragmentYaoTiao2 extends Fragment  {
                 }
                 break;
             case 1:
-                if (fg2 == null) {
+                if (null == fg2) {
                     fg2 = new FragmentYaotiaoData2_2();
                     fragmentTransaction.add(R.id.yaotiao_fragment_container, fg2);
                 } else {
@@ -109,7 +111,7 @@ public class FragmentYaoTiao2 extends Fragment  {
                 }
                 break;
             case 2:
-                if (fg3 == null) {
+                if (null == fg3) {
                     fg3 = new FragmentKongzhi();
                     fragmentTransaction.add(R.id.yaotiao_fragment_container, fg3);
                 } else {
@@ -125,13 +127,13 @@ public class FragmentYaoTiao2 extends Fragment  {
      * @param fragmentTransaction
      */
     private void hideFragments(FragmentTransaction fragmentTransaction) {
-        if (fg1 != null) {
+        if (null != fg1) {
             fragmentTransaction.hide(fg1);
         }
-        if (fg2 != null) {
+        if (null != fg2) {
             fragmentTransaction.hide(fg2);
         }
-        if (fg3 != null) {
+        if (null != fg3) {
             fragmentTransaction.hide(fg3);
         }
     }
@@ -140,15 +142,17 @@ public class FragmentYaoTiao2 extends Fragment  {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if(!hidden){
-            Log.d("fragment_yaotiao", "onHiddenChanged_show");
+            setChioceItem(position);
         } else {
-            Log.d("fragment_yaotiao", "onHiddenChanged_hide");
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            hideFragments(fragmentTransaction);
+            fragmentTransaction.commit(); // 提交
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("fragment_yaotiao", "onResume");
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        Log.d("fragment_yaotiao", "onResume");
+//    }
 }

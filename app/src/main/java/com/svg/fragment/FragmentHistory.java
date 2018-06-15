@@ -28,6 +28,7 @@ public class FragmentHistory extends Fragment  {
     private FragmentHistoryData1 fg1;
     private FragmentHistoryData2 fg2;
     private FragmentHistoryData3 fg3;
+    private int position = 0;
 
     @Nullable
     @Override
@@ -64,11 +65,12 @@ public class FragmentHistory extends Fragment  {
         mTab.addTab(mTab.newTab().setText(mTitles.get(0)));
         mTab.addTab(mTab.newTab().setText(mTitles.get(1)));
         mTab.addTab(mTab.newTab().setText(mTitles.get(2)));
-        setChioceItem(0);
+        setChioceItem(position);
         mTab.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                setChioceItem(tab.getPosition());
+                position = tab.getPosition();
+                setChioceItem(position);
             }
 
             @Override
@@ -88,11 +90,12 @@ public class FragmentHistory extends Fragment  {
      * @param index
      */
     private void setChioceItem(int index) {
+        Log.d("ConnectModbus", "历史显示"+index);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         hideFragments(fragmentTransaction);
         switch (index) {
             case 0:
-                if (fg1 == null) {
+                if (null == fg1) {
                     fg1 = new FragmentHistoryData1();
                     fragmentTransaction.add(R.id.history_fragment_container, fg1);
                 } else {
@@ -101,7 +104,7 @@ public class FragmentHistory extends Fragment  {
                 }
                 break;
             case 1:
-                if (fg2 == null) {
+                if (null == fg2) {
                     fg2 = new FragmentHistoryData2();
                     fragmentTransaction.add(R.id.history_fragment_container, fg2);
                 } else {
@@ -109,7 +112,7 @@ public class FragmentHistory extends Fragment  {
                 }
                 break;
             case 2:
-                if (fg3 == null) {
+                if (null == fg3) {
                     fg3 = new FragmentHistoryData3();
                     fragmentTransaction.add(R.id.history_fragment_container, fg3);
                 } else {
@@ -125,13 +128,13 @@ public class FragmentHistory extends Fragment  {
      * @param fragmentTransaction
      */
     private void hideFragments(FragmentTransaction fragmentTransaction) {
-        if (fg1 != null) {
+        if (null != fg1) {
             fragmentTransaction.hide(fg1);
         }
-        if (fg2 != null) {
+        if (null != fg2) {
             fragmentTransaction.hide(fg2);
         }
-        if (fg3 != null) {
+        if (null != fg3) {
             fragmentTransaction.hide(fg3);
         }
     }
@@ -139,16 +142,20 @@ public class FragmentHistory extends Fragment  {
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
+        Log.d("ConnectModbus", "历史隐藏"+hidden);
         if(!hidden){
-            Log.d("fragment_yaoce", "onHiddenChanged_show");
+            setChioceItem(position);
         } else {
-            Log.d("fragment_yaoce", "onHiddenChanged_hide");
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            hideFragments(fragmentTransaction);
+            fragmentTransaction.commit(); // 提交
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("fragment_yaoce", "onResume");
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        Log.d("ConnectModbus", "历史恢复");
+//        setChioceItem(position);
+//    }
 }

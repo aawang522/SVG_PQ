@@ -5,10 +5,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.svg.ConnectModbus;
 import com.svg.R;
@@ -17,6 +19,8 @@ import com.svg.utils.ModbusResponseListner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * 状态1Fragment
@@ -33,6 +37,24 @@ public class FragmentZhuangtaiData1 extends Fragment implements ModbusResponseLi
     private ModbusResponseListner responseListner;
     private Handler handler;
     private List<TextView> textList = new ArrayList<>();
+    private Timer timer;
+    private boolean isHidden = false;
+    private boolean isPaused = false;
+
+    /**
+     * 计时器，每隔5s更新数据
+     */
+    private void startTimer() {
+        timer = new Timer();
+        // 0无延时，间隔5s
+        timer.schedule(new TimerTask() {
+            public void run() {
+                Message message = new Message();
+                message.what = 2010;
+                handler.sendMessage(message);
+            }
+        }, 0, 1000 * 5); //启动timer
+    }
 
     @Nullable
     @Override
@@ -41,6 +63,10 @@ public class FragmentZhuangtaiData1 extends Fragment implements ModbusResponseLi
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_zhuangtaidata1, container, false);
         init(view);
+        if (null != timer) {
+            timer.cancel();
+        }
+        startTimer();
         return view;
     }
 
@@ -49,6 +75,9 @@ public class FragmentZhuangtaiData1 extends Fragment implements ModbusResponseLi
      * @param view
      */
     private void init(View view){
+        responseListner = this;
+        handler = new Handler(this);
+
         txtCSZT = (TextView)view.findViewById(R.id.txtCSZT);
         txtYCDZT = (TextView)view.findViewById(R.id.txtYCDZT);
         txtHZZT = (TextView)view.findViewById(R.id.txtHZZT);
@@ -64,8 +93,6 @@ public class FragmentZhuangtaiData1 extends Fragment implements ModbusResponseLi
     }
 
     private void initData(){
-        responseListner = this;
-        handler = new Handler(this);
         // 设置请求报文
         byte[] requestOriginalData = setRequestData();
         // 调用连接modbus函数
@@ -114,26 +141,32 @@ public class FragmentZhuangtaiData1 extends Fragment implements ModbusResponseLi
     public boolean handleMessage(Message msg) {
         switch (msg.what){
             case 201:
+                Log.d("dingshi",  "获取状态1");
                 List<Boolean> dataList = new ArrayList<>();
                 dataList = ConnectModbus.parsingWei_ZhuangtaiData1((byte[])msg.obj);
-                for (int i = 0; i<dataList.size();i++){
-                    // 如果是最末尾的，则是开关
-                    if(i == dataList.size()-1){
-                        if(dataList.get(i)) {
+                if(null != dataList && 0 < dataList.size()) {
+                    for (int i = 0; i < dataList.size(); i++) {
+                        // 如果是最末尾的，则是开关
+                        if (i == dataList.size() - 1) {
+                            if (dataList.get(i)) {
 //                            textList.get(i).setText("开");
-                            textList.get(i).setBackgroundResource(R.drawable.btn_login_red);
-                        } else {
+                                textList.get(i).setBackgroundResource(R.drawable.btn_login_red);
+                            } else {
 //                            textList.get(i).setText("关");
-                            textList.get(i).setBackgroundResource(R.drawable.bg_login_passwd);
-                        }
-                    } else {
-                        if (dataList.get(i)) {
-                            textList.get(i).setBackgroundResource(R.drawable.btn_login_pre);
+                                textList.get(i).setBackgroundResource(R.drawable.bg_login_passwd);
+                            }
                         } else {
-                            textList.get(i).setBackgroundResource(R.drawable.bg_login_passwd);
+                            if (dataList.get(i)) {
+                                textList.get(i).setBackgroundResource(R.drawable.btn_login_pre);
+                            } else {
+                                textList.get(i).setBackgroundResource(R.drawable.bg_login_passwd);
+                            }
                         }
                     }
                 }
+                break;
+            case 2010:
+                initData();
                 break;
         }
         return false;
@@ -142,14 +175,44 @@ public class FragmentZhuangtaiData1 extends Fragment implements ModbusResponseLi
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if(!hidden){
-            initData();
+        isHidden = hidden;
+        if (null != timer) {
+            timer.cancel();
+        }
+        if (!hidden) {
+            startTimer();
+        } else {
+            if (null != handler) {
+                handler.removeMessages(2010);
+                handler.removeMessages(201);
+            }
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        initData();
+        // 开屏时，判断如果是在当前界面又是刚从关屏状态过来，就继续定时更新
+        if(!isHidden && isPaused) {
+            isPaused = false;
+            if (null != timer) {
+                timer.cancel();
+            }
+            startTimer();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // 关屏时，记录isPaused状态位，清空消息，停止定时更新
+        isPaused = true;
+        if(null != timer){
+            timer.cancel();
+        }
+        if(null != handler) {
+            handler.removeMessages(2010);
+            handler.removeMessages(201);
+        }
     }
 }

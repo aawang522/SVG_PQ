@@ -69,8 +69,7 @@
             style="@style/Line_horizontal"/>
         <!-- 调度等级 -->
         <LinearLayout
-            style="@style/WorkInfoLinearLayout"
-            android:visibility="gone">
+            style="@style/WorkInfoLinearLayout">
             <TextView
                 style="@style/WorkInfoLeftTextView"
                 android:text="@string/yaoce_wyglys"
@@ -80,6 +79,8 @@
                 style="@style/BusinessInfoRightEditText"
                 />
         </LinearLayout>
+        <ImageView
+            style="@style/Line_horizontal"/>
         <!-- 影响程度 -->
         <LinearLayout
             style="@style/WorkInfoLinearLayout">

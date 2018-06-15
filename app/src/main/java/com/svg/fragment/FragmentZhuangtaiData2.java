@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +13,12 @@ import android.widget.TextView;
 
 import com.svg.ConnectModbus;
 import com.svg.R;
-import com.svg.common.MyApp;
 import com.svg.utils.ModbusResponseListner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * 状态2Fragment
@@ -39,6 +41,25 @@ public class FragmentZhuangtaiData2 extends Fragment implements ModbusResponseLi
     private ModbusResponseListner responseListner;
     private Handler handler;
     private List<TextView> textList = new ArrayList<>();
+    private Timer timer;
+    // 因为这里首次进来不会进入onHidden里改变状态，所以初设为false
+    private boolean isHidden = false;
+    private boolean isPaused = false;
+
+    /**
+     * 计时器，每隔5s更新数据
+     */
+    private void startTimer() {
+        timer = new Timer();
+        // 0无延时，间隔5s
+        timer.schedule(new TimerTask() {
+            public void run() {
+                Message message = new Message();
+                message.what = 2020;
+                handler.sendMessage(message);
+            }
+        }, 0, 1000 * 5); //启动timer
+    }
 
     @Nullable
     @Override
@@ -47,6 +68,10 @@ public class FragmentZhuangtaiData2 extends Fragment implements ModbusResponseLi
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_zhuangtaidata2, container, false);
         init(view);
+        if (null != timer) {
+            timer.cancel();
+        }
+        startTimer();
         return view;
     }
 
@@ -55,6 +80,9 @@ public class FragmentZhuangtaiData2 extends Fragment implements ModbusResponseLi
      * @param view
      */
     private void init(View view){
+        responseListner = this;
+        handler = new Handler(this);
+
         txtFBDRQ1A = (TextView)view.findViewById(R.id.txtFBDRQ1A);
         txtFBDRQ1B = (TextView)view.findViewById(R.id.txtFBDRQ1B);
         txtFBDRQ1C = (TextView)view.findViewById(R.id.txtFBDRQ1C);
@@ -82,8 +110,6 @@ public class FragmentZhuangtaiData2 extends Fragment implements ModbusResponseLi
     }
 
     private void initData(){
-        responseListner = this;
-        handler = new Handler(this);
         // 设置请求报文
         byte[] requestOriginalData = setRequestData();
         // 调用连接modbus函数
@@ -132,15 +158,21 @@ public class FragmentZhuangtaiData2 extends Fragment implements ModbusResponseLi
     public boolean handleMessage(Message msg) {
         switch (msg.what){
             case 202:
+                Log.d("dingshi",  "获取状态2");
                 List<Boolean> dataList = new ArrayList<>();
                 dataList = ConnectModbus.parsingWei_ZhuangtaiData2((byte[])msg.obj);
-                for (int i = 0; i<dataList.size();i++){
+                if(null != dataList && 0 < dataList.size()) {
+                    for (int i = 0; i < dataList.size(); i++) {
                         if (dataList.get(i)) {
                             textList.get(i).setBackgroundResource(R.drawable.btn_login_pre);
                         } else {
                             textList.get(i).setBackgroundResource(R.drawable.bg_login_passwd);
                         }
+                    }
                 }
+                break;
+            case 2020:
+                initData();
                 break;
         }
         return false;
@@ -149,14 +181,44 @@ public class FragmentZhuangtaiData2 extends Fragment implements ModbusResponseLi
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if(!hidden){
-            initData();
+        isHidden = hidden;
+        if (null != timer) {
+            timer.cancel();
+        }
+        if (!hidden) {
+            startTimer();
+        } else {
+            if (null != handler) {
+                handler.removeMessages(2020);
+                handler.removeMessages(202);
+            }
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        initData();
+        // 开屏时，判断如果是在当前界面又是刚从关屏状态过来，就继续定时更新
+        if(!isHidden && isPaused) {
+            isPaused = false;
+            if (null != timer) {
+                timer.cancel();
+            }
+            startTimer();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // 关屏时，记录isPaused状态位，清空消息，停止定时更新
+        isPaused = true;
+        if(null != timer){
+            timer.cancel();
+        }
+        if(null != handler) {
+            handler.removeMessages(2020);
+            handler.removeMessages(202);
+        }
     }
 }

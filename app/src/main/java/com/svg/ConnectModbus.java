@@ -136,6 +136,7 @@ public class ConnectModbus {
             public void run() {
                 try {
                     if(null != MyApp.socket && !MyApp.socket.isClosed()) {
+                        Log.d("ConnectModbus", "发送请求——"+requestOriginaldata);
                         // 获取Socket的OutputStream对象用于发送数据。
                         OutputStream outputStream = MyApp.socket.getOutputStream();
                         // 把数据写入到OuputStream对象中
@@ -179,6 +180,7 @@ public class ConnectModbus {
             public void run() {
                 try {
                     if(null != MyApp.socket && !MyApp.socket.isClosed()) {
+                        Log.d("ConnectModbus", "发送历史请求——"+requestOriginaldata1+";data2="+requestOriginaldata2);
                         // 获取Socket的OutputStream对象用于发送数据。
                         OutputStream outputStream = MyApp.socket.getOutputStream();
                         // 补偿前
@@ -234,6 +236,7 @@ public class ConnectModbus {
             public void run() {
                 try {
                     if(null != MyApp.socket && !MyApp.socket.isClosed()) {
+                        Log.d("ConnectModbus", "发送ABC请求——"+requestOriginaldata1+";data2="+requestOriginaldata2);
                         // 获取Socket的OutputStream对象用于发送数据。
                         OutputStream outputStream = MyApp.socket.getOutputStream();
                         // A
@@ -386,16 +389,19 @@ public class ConnectModbus {
         String crcStr = getCRC(originalData);
         // 把16进制string类型的crc转为byte[]
         byte[] byte2 = hexStringToBytes(crcStr);
-        // 然后定义另一个byte[]来整合请求报文和crc
-        byte buffer2[] = new byte[8];
-        for(int i =0;i<originalData.length;i++){
-            buffer2[i] = originalData[i];
+        if(null != byte2 && 1<byte2.length) {
+            // 然后定义另一个byte[]来整合请求报文和crc
+            byte buffer2[] = new byte[8];
+            for (int i = 0; i < originalData.length; i++) {
+                buffer2[i] = originalData[i];
+            }
+            // 将crc放在报文末尾，注意低字节在前，高字节在后
+            buffer2[6] = byte2[1];
+            // 最后成功的buffer2[]: 1 3 7 -48 0 8 68 -127
+            buffer2[7] = byte2[0];
+            return buffer2;
         }
-        // 将crc放在报文末尾，注意低字节在前，高字节在后
-        buffer2[6] = byte2[1];
-        // 最后成功的buffer2[]: 1 3 7 -48 0 8 68 -127
-        buffer2[7] = byte2[0];
-        return buffer2;
+        return originalData;
     }
 
     /**
@@ -406,16 +412,19 @@ public class ConnectModbus {
         String crcStr = getCRC(originalData);
         // 把16进制string类型的crc转为byte[]
         byte[] byte2 = hexStringToBytes(crcStr);
-        // 然后定义另一个byte[]来整合请求报文和crc
-        byte buffer2[] = new byte[originalData.length+2];
-        for(int i =0;i<originalData.length;i++){
-            buffer2[i] = originalData[i];
+        if(null != byte2 && 1<byte2.length) {
+            // 然后定义另一个byte[]来整合请求报文和crc
+            byte buffer2[] = new byte[originalData.length + 2];
+            for (int i = 0; i < originalData.length; i++) {
+                buffer2[i] = originalData[i];
+            }
+            // 将crc放在报文末尾，注意低字节在前，高字节在后
+            buffer2[originalData.length] = byte2[1];
+            // 最后成功的buffer2[]: 1 3 7 -48 0 8 68 -127
+            buffer2[originalData.length + 1] = byte2[0];
+            return buffer2;
         }
-        // 将crc放在报文末尾，注意低字节在前，高字节在后
-        buffer2[originalData.length] = byte2[1];
-        // 最后成功的buffer2[]: 1 3 7 -48 0 8 68 -127
-        buffer2[originalData.length+1] = byte2[0];
-        return buffer2;
+        return originalData;
     }
 
     /**
@@ -463,7 +472,7 @@ public class ConnectModbus {
      */
     public static boolean checkReturnCRC(byte[] buffer1){
         //  && 0<buffer1[2]
-        if(5<buffer1.length) {
+        if(null != buffer1 && 5 < buffer1.length) {
             // buffer1的第2个字节就是返回数据的长度，加上5就是整体返回报文的长度
             short[] shorts = new short[1];
             shorts[0] = (short) (0x00FF & buffer1[2]);
@@ -493,13 +502,13 @@ public class ConnectModbus {
      * 验证历史数据的CRC
      */
     public static int checkHistoryCRC(byte[] buffer1){
-        if(5<buffer1.length) {
+        if(null != buffer1 && 5 < buffer1.length) {
             // buffer1的第2个字节就是返回数据的长度，加上5就是整体返回报文的长度
 //            short[] shorts = new short[1];
 //            shorts[0] = (short) (0x00FF & buffer1[2]);
             int reactLength = returnActualLength(buffer1);
             // 为了计算crc，先将buffer1除去crc的长度赋给buffer2
-            if(reactLength > 1) {
+            if(reactLength > 2) {
                 byte buffer2[] = new byte[reactLength - 2];
                 // 先将buffer1的前面赋值给buffer2，便于计算crc
                 for (int i = 0; i < reactLength - 2; i++) {
@@ -524,12 +533,15 @@ public class ConnectModbus {
     }
 
     public static int returnActualLength(byte[] data) {
-        int i = data.length - 1;
-        for (; i >= 0; i--) {
-            if (data[i] != '\0')
-                break;
+        if(null != data && 1 < data.length) {
+            int i = data.length - 1;
+            for (; i >= 0; i--) {
+                if (data[i] != '\0')
+                    break;
+            }
+            return i + 1;
         }
-        return i+1;
+        return 0;
     }
 
     /**
@@ -1210,7 +1222,7 @@ public class ConnectModbus {
     public static HistoryBean from32_Lishi(byte[] buffer1, String type, byte length){
         // 得到的数据：2018  3  50.012512  51.012512  52...  53...  54... .... 62.012512
         int reactLength = checkHistoryCRC(buffer1);
-        if(0 != reactLength) {
+        if(5 < reactLength) {
             HistoryBean historyBean = new HistoryBean();
             List<Float> dataList = new ArrayList<>();
             // 返回数据的长度
@@ -1374,7 +1386,7 @@ public class ConnectModbus {
      * @param hexString the hex string
      * @return byte[]
      */
-    private static byte[] hexStringToBytes(String hexString) {
+    public static byte[] hexStringToBytes(String hexString) {
         if (hexString == null || hexString.equals("")) {
             return null;
         }
@@ -1569,6 +1581,25 @@ public class ConnectModbus {
             }
         }
         return data;
+    }
+
+    /**
+     * 防止字节越界
+     * @param b
+     * @return
+     */
+    public  static  String printHexString( byte[] b) {
+        String a = "";
+        for (int i = 0; i < b.length; i++) {
+            String hex = Integer.toHexString(b[i] & 0xFF);
+            if (hex.length() == 1) {
+                hex = '0' + hex;
+            }
+
+            a = a+hex;
+        }
+
+        return a;
     }
 }
 

@@ -3,8 +3,8 @@ package com.svg.fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,11 +13,13 @@ import android.widget.TextView;
 
 import com.svg.ConnectModbus;
 import com.svg.R;
-import com.svg.common.MyApp;
 import com.svg.utils.ModbusResponseListner;
+import com.svg.utils.MoneyValueFilter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * 遥测数据1
@@ -39,10 +41,28 @@ public class FragmentYaoceData3 extends Fragment implements ModbusResponseListne
     private TextView yaoce_a12cxb;
     private TextView yaoce_a13cxb;
 
-    private String mTitle;
     private ModbusResponseListner responseListner;
     private List<TextView> textList = new ArrayList<>();
     private Handler handler;
+    private Timer timer;
+    // 因为这里首次进来不会进入onHidden里改变状态，所以初设为false
+    private boolean isHidden = false;
+    private boolean isPaused = false;
+
+    /**
+     * 计时器，每隔5s更新数据
+     */
+    private void startTimer(){
+        timer = new Timer();
+        // 0无延时，间隔5s
+        timer.schedule(new TimerTask() {
+            public void run() {
+                Message message = new Message();
+                message.what = 1030;
+                handler.sendMessage(message);
+            }
+        }, 0, 1000 * 5); //启动timer
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,15 +75,11 @@ public class FragmentYaoceData3 extends Fragment implements ModbusResponseListne
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_yaoce_data3, null);
         init(view);
-        Log.d("fragment3", "onCreateView");
-//        initData();
+        if (null != timer) {
+            timer.cancel();
+        }
+        startTimer();
         return view;
-    }
-
-    public static FragmentYaoceData3 getInstance(String title) {
-        FragmentYaoceData3 sf = new FragmentYaoceData3();
-        sf.mTitle = title;
-        return sf;
     }
 
     /**
@@ -71,6 +87,9 @@ public class FragmentYaoceData3 extends Fragment implements ModbusResponseListne
      * @param view
      */
     private void init(View view){
+        responseListner = this;
+        handler = new Handler(this);
+
         yaoce_a1cxb = (TextView)view.findViewById(R.id.yaoce_a1cxb);
         yaoce_a2cxb = (TextView)view.findViewById(R.id.yaoce_a2cxb);
         yaoce_a3cxb = (TextView)view.findViewById(R.id.yaoce_a3cxb);
@@ -97,11 +116,22 @@ public class FragmentYaoceData3 extends Fragment implements ModbusResponseListne
         textList.add(yaoce_a11cxb);
         textList.add(yaoce_a12cxb);
         textList.add(yaoce_a13cxb);
+        yaoce_a1cxb.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaoce_a2cxb.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaoce_a3cxb.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaoce_a4cxb.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaoce_a5cxb.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaoce_a6cxb.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaoce_a7cxb.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaoce_a8cxb.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaoce_a9cxb.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaoce_a10cxb.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaoce_a11cxb.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaoce_a12cxb.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaoce_a13cxb.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
     }
 
     private void initData(){
-        responseListner = this;
-        handler = new Handler(this);
         // 设置请求报文
         byte[] requestOriginalData = setRequestData();
         // 调用连接modbus函数
@@ -150,6 +180,7 @@ public class FragmentYaoceData3 extends Fragment implements ModbusResponseListne
     public boolean handleMessage(Message msg) {
         switch (msg.what){
             case 103:
+                Log.d("dingshi",  "获取遥测3");
                 List<Float> dataList = new ArrayList<>();
                 dataList = ConnectModbus.from32Fudian((byte[])msg.obj);
                 if (null != dataList && 0 < dataList.size()) {
@@ -160,6 +191,9 @@ public class FragmentYaoceData3 extends Fragment implements ModbusResponseListne
                     }
                 }
                 break;
+            case 1030:
+                initData();
+                break;
         }
         return false;
     }
@@ -167,18 +201,44 @@ public class FragmentYaoceData3 extends Fragment implements ModbusResponseListne
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
+        isHidden = hidden;
+        if(null != timer){
+            timer.cancel();
+        }
         if(!hidden){
-            initData();
-            Log.d("fragment3", "onHiddenChanged_show");
+            startTimer();
         } else {
-            Log.d("fragment3", "onHiddenChanged_hide");
+            if(null != handler) {
+                handler.removeMessages(1030);
+                handler.removeMessages(103);
+            }
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        initData();
-        Log.d("fragment3", "onResume");
+        // 开屏时，判断如果是在当前界面又是刚从关屏状态过来，就继续定时更新
+        if(!isHidden && isPaused) {
+            isPaused = false;
+            if (null != timer) {
+                timer.cancel();
+            }
+            startTimer();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // 关屏时，记录isPaused状态位，清空消息，停止定时更新
+        isPaused = true;
+        if(null != timer){
+            timer.cancel();
+        }
+        if(null != handler) {
+            handler.removeMessages(1030);
+            handler.removeMessages(103);
+        }
     }
 }

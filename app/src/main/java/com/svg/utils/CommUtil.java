@@ -289,4 +289,23 @@ public class CommUtil {
                 .setDataAndType(uri, "application/vnd.android.package-archive");
         context.startActivity(apkIntent);
     }
+
+    /**
+     * fragment切换时隐藏输入法
+     * @param context
+     */
+    public static void hideIputKeyboard(final Context context) {
+        final Activity activity = (Activity) context;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                InputMethodManager mInputKeyBoard = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (null != activity && null != activity.getCurrentFocus()) {
+                    mInputKeyBoard.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                    activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+                }
+            }
+        });
+    }
 }

@@ -6,6 +6,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.ArrayMap;
+import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.svg.common.MyApp;
 import com.svg.utils.CommUtil;
 import com.svg.utils.HistoryResponseListner;
 import com.svg.utils.ModbusResponseListner;
+import com.svg.utils.MoneyValueFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +54,8 @@ public class FragmentYaotiaoData2_1 extends Fragment implements ModbusResponseLi
     private ModbusResponseListner responseListner2;
     private List<EditText> textList = new ArrayList<>();
     private Handler handler;
+    private boolean isHidden = false;
+    private boolean isPaused = false;
 
     @Nullable
     @Override
@@ -60,6 +64,7 @@ public class FragmentYaotiaoData2_1 extends Fragment implements ModbusResponseLi
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_yaotiao_data2_1, container, false);
         init(view);
+        getData();
         return view;
     }
 
@@ -100,6 +105,14 @@ public class FragmentYaotiaoData2_1 extends Fragment implements ModbusResponseLi
 
         btn_data21commit = (Button) view.findViewById(R.id.btn_data21commit);
         btn_data21commit.setOnClickListener(this);
+
+        // 设置小数点位数
+        yaotiao_eddl.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_blts.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_ctbb.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_yxms.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_wgbcms.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_xbbcms.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
     }
 
     @Override
@@ -348,82 +361,88 @@ public class FragmentYaotiaoData2_1 extends Fragment implements ModbusResponseLi
         // 第一块数据
         if(ConnectModbus.checkReturnCRC(map.get("data1"))) {
             byte[] buffer1 = map.get("data1");
-            int dataLength = buffer1[2] / 4;
-            // 根据数据的个数，一一展示在textview中
-            for (int i = 0; i < dataLength; i++) {
-                short[] shorts = new short[4];
-                shorts[0] = (short) (0x00FF & buffer1[4 * i + 3]);
-                shorts[1] = (short) (0x00FF & buffer1[4 * i + 3 + 1]);
-                shorts[2] = (short) (0x00FF & buffer1[4 * i + 3 + 2]);
-                shorts[3] = (short) (0x00FF & buffer1[4 * i + 3 + 3]);
+            if(null != buffer1 && 3 < buffer1.length && 0 < buffer1[2]) {
+                int dataLength = buffer1[2] / 4;
+                // 根据数据的个数，一一展示在textview中
+                for (int i = 0; i < dataLength; i++) {
+                    short[] shorts = new short[4];
+                    shorts[0] = (short) (0x00FF & buffer1[4 * i + 3]);
+                    shorts[1] = (short) (0x00FF & buffer1[4 * i + 3 + 1]);
+                    shorts[2] = (short) (0x00FF & buffer1[4 * i + 3 + 2]);
+                    shorts[3] = (short) (0x00FF & buffer1[4 * i + 3 + 3]);
 
-                // 第0位是32位浮点数，额定电流
-                if (i == 0) {
-                    // 将10进制转换成16进制
-                    StringBuilder data1Str = ConnectModbus.bytesToHexFun3(shorts);
-                    // 将16进制单精度浮点型转换为10进制浮点型，这就是计算出来的数据
-                    Float data1 = ConnectModbus.parseHex2Float(data1Str.toString());
-                    yaotiao_eddl.setText(String.valueOf(data1));
-                }
-                // 第3位是32位无符号数，并联台数
-                if (i == 3) {
-                    long a = shorts[0] * 0x1000000 + shorts[1] * 0x10000 + shorts[2] * 0x100 + shorts[3];
-                    yaotiao_blts.setText(String.valueOf(a));
-                }
-                // 第4位是32位浮点数，CT变比
-                if (i == 4) {
-                    // 将10进制转换成16进制
-                    StringBuilder data1Str = ConnectModbus.bytesToHexFun3(shorts);
-                    // 将16进制单精度浮点型转换为10进制浮点型，这就是计算出来的数据
-                    Float data1 = ConnectModbus.parseHex2Float(data1Str.toString());
-                    yaotiao_ctbb.setText(String.valueOf(data1));
+                    // 第0位是32位浮点数，额定电流
+                    if (i == 0) {
+                        // 将10进制转换成16进制
+                        StringBuilder data1Str = ConnectModbus.bytesToHexFun3(shorts);
+                        // 将16进制单精度浮点型转换为10进制浮点型，这就是计算出来的数据
+                        Float data1 = ConnectModbus.parseHex2Float(data1Str.toString());
+                        yaotiao_eddl.setText(String.valueOf(data1));
+                    }
+                    // 第3位是32位无符号数，并联台数
+                    if (i == 3) {
+                        long a = shorts[0] * 0x1000000 + shorts[1] * 0x10000 + shorts[2] * 0x100 + shorts[3];
+                        yaotiao_blts.setText(String.valueOf(a));
+                    }
+                    // 第4位是32位浮点数，CT变比
+                    if (i == 4) {
+                        // 将10进制转换成16进制
+                        StringBuilder data1Str = ConnectModbus.bytesToHexFun3(shorts);
+                        // 将16进制单精度浮点型转换为10进制浮点型，这就是计算出来的数据
+                        Float data1 = ConnectModbus.parseHex2Float(data1Str.toString());
+                        yaotiao_ctbb.setText(String.valueOf(data1));
+                    }
                 }
             }
         }
         // 第二块数据
         if(ConnectModbus.checkReturnCRC(map.get("data2"))) {
             byte[] buffer2 = map.get("data2");
-            int dataLength = buffer2[2] / 4;
-            // 根据数据的个数，一一展示在textview中
-            for (int i = 0; i < dataLength; i++) {
-                short[] shorts = new short[4];
-                shorts[0] = (short) (0x00FF & buffer2[4 * i + 3]);
-                shorts[1] = (short) (0x00FF & buffer2[4 * i + 3 + 1]);
-                shorts[2] = (short) (0x00FF & buffer2[4 * i + 3 + 2]);
-                shorts[3] = (short) (0x00FF & buffer2[4 * i + 3 + 3]);
+            if(null != buffer2 && 3 < buffer2.length && 0 < buffer2[2]) {
+                int dataLength = buffer2[2] / 4;
+                // 根据数据的个数，一一展示在textview中
+                for (int i = 0; i < dataLength; i++) {
+                    short[] shorts = new short[4];
+                    shorts[0] = (short) (0x00FF & buffer2[4 * i + 3]);
+                    shorts[1] = (short) (0x00FF & buffer2[4 * i + 3 + 1]);
+                    shorts[2] = (short) (0x00FF & buffer2[4 * i + 3 + 2]);
+                    shorts[3] = (short) (0x00FF & buffer2[4 * i + 3 + 3]);
 
-                // 第0位是32位浮点数，运行模式
-                if (i == 0) {
-                    // 将10进制转换成16进制
-                    StringBuilder data1Str = ConnectModbus.bytesToHexFun3(shorts);
-                    // 将16进制单精度浮点型转换为10进制浮点型，这就是计算出来的数据
-                    Float data1 = ConnectModbus.parseHex2Float(data1Str.toString());
-                    yaotiao_yxms.setText(String.valueOf(data1));
-                }
-                // 第1位是32位无符号数，无功补偿模式
-                if (i == 1) {
-                    long a = shorts[0] * 0x1000000 + shorts[1] * 0x10000 + shorts[2] * 0x100 + shorts[3];
-                    yaotiao_wgbcms.setText(String.valueOf(a));
-                }
-                // 第2位是32位无符号数，谐波补偿模式
-                if (i == 2) {
-                    long a = shorts[0] * 0x1000000 + shorts[1] * 0x10000 + shorts[2] * 0x100 + shorts[3];
-                    yaotiao_xbbcms.setText(String.valueOf(a));
+                    // 第0位是32位浮点数，运行模式
+                    if (i == 0) {
+                        // 将10进制转换成16进制
+                        StringBuilder data1Str = ConnectModbus.bytesToHexFun3(shorts);
+                        // 将16进制单精度浮点型转换为10进制浮点型，这就是计算出来的数据
+                        Float data1 = ConnectModbus.parseHex2Float(data1Str.toString());
+                        yaotiao_yxms.setText(String.valueOf(data1));
+                    }
+                    // 第1位是32位无符号数，无功补偿模式
+                    if (i == 1) {
+                        long a = shorts[0] * 0x1000000 + shorts[1] * 0x10000 + shorts[2] * 0x100 + shorts[3];
+                        yaotiao_wgbcms.setText(String.valueOf(a));
+                    }
+                    // 第2位是32位无符号数，谐波补偿模式
+                    if (i == 2) {
+                        long a = shorts[0] * 0x1000000 + shorts[1] * 0x10000 + shorts[2] * 0x100 + shorts[3];
+                        yaotiao_xbbcms.setText(String.valueOf(a));
+                    }
                 }
             }
         }
         // 第三块数据
         if(ConnectModbus.checkReturnCRC(map.get("data3"))) {
             byte[] buffer3 = map.get("data3");
-            int dataLength3 = buffer3[2] / 2;
-            // 根据数据的个数，一一展示在textview中
-            for (int i = 0; i < dataLength3; i++) {
-                byte[] data1Byte = new byte[2];
-                // 从第17位开始计算
-                data1Byte[1] = buffer3[2 * i + 3];
-                data1Byte[0] = buffer3[2 * i + 3 + 1];
-                int b = data1Byte[1]*0x10 +data1Byte[0];
-                textList.get(i).setText(String.valueOf(b));
+            if(null != buffer3 && 3 < buffer3.length && 0 < buffer3[2]) {
+                int dataLength3 = buffer3[2] / 2;
+                // 根据数据的个数，一一展示在textview中
+                for (int i = 0; i < dataLength3; i++) {
+                    byte[] data1Byte = new byte[2];
+                    // 从第17位开始计算
+                    data1Byte[1] = buffer3[2 * i + 3];
+                    data1Byte[0] = buffer3[2 * i + 3 + 1];
+                    int b = data1Byte[1] * 0x10 + data1Byte[0];
+                    textList.get(i).setText(String.valueOf(b));
+                }
             }
         }
     }
@@ -431,15 +450,36 @@ public class FragmentYaotiaoData2_1 extends Fragment implements ModbusResponseLi
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
+        isHidden = hidden;
         if(!hidden){
             getData();
+        } else {
+            if(null != handler) {
+                handler.removeMessages(1201);
+                handler.removeMessages(1211);
+            }
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getData();
+        // 开屏时，判断如果是在当前界面又是刚从关屏状态过来，就继续定时更新
+        if(!isHidden && isPaused) {
+            isPaused = false;
+            getData();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // 关屏时，记录isPaused状态位，清空消息，停止定时更新
+        isPaused = true;
+        if(null != handler) {
+            handler.removeMessages(1201);
+            handler.removeMessages(1211);
+        }
     }
 
     /**

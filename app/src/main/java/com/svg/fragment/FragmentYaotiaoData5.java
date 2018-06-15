@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,9 @@ import com.luoshihai.xxdialog.DialogViewHolder;
 import com.luoshihai.xxdialog.XXDialog;
 import com.svg.ConnectModbus;
 import com.svg.R;
-import com.svg.common.MyApp;
 import com.svg.utils.CommUtil;
 import com.svg.utils.ModbusResponseListner;
+import com.svg.utils.MoneyValueFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,8 @@ public class FragmentYaotiaoData5 extends Fragment implements ModbusResponseList
     private List<EditText> textList = new ArrayList<>();
     private Handler handler;
     private static byte[] data6Info = new byte[6];
+    private boolean isHidden = false;
+    private boolean isPaused = false;
 
     @Nullable
     @Override
@@ -51,6 +54,7 @@ public class FragmentYaotiaoData5 extends Fragment implements ModbusResponseList
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_yaotiao_data5, container, false);
         init(view);
+        getData();
         return view;
     }
 
@@ -84,6 +88,16 @@ public class FragmentYaotiaoData5 extends Fragment implements ModbusResponseList
         btn_data5commit = (Button) view.findViewById(R.id.btn_data5commit);
         btn_data5commit.setOnClickListener(this);
 
+        // 设置小数点位数
+        yaotiao_wgzldl.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(1)});
+        yaotiao_ppdxkz.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_svgrl.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_1gbrl.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_2gbrl.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_3gbrl.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_4dxfbrl.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_5dxfbrl.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
+        yaotiao_6dxfbrl.setFilters(new InputFilter[]{new MoneyValueFilter().setDigits(0)});
     }
 
     @Override
@@ -227,15 +241,36 @@ public class FragmentYaotiaoData5 extends Fragment implements ModbusResponseList
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
+        isHidden = hidden;
         if(!hidden){
             getData();
+        } else {
+            if(null != handler) {
+                handler.removeMessages(1005);
+                handler.removeMessages(1015);
+            }
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getData();
+        // 开屏时，判断如果是在当前界面又是刚从关屏状态过来，就继续定时更新
+        if(!isHidden && isPaused) {
+            isPaused = false;
+            getData();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // 关屏时，记录isPaused状态位，清空消息，停止定时更新
+        isPaused = true;
+        if(null != handler) {
+            handler.removeMessages(1005);
+            handler.removeMessages(1015);
+        }
     }
 
     /**
@@ -281,7 +316,11 @@ public class FragmentYaotiaoData5 extends Fragment implements ModbusResponseList
                 shorts2[0] = buffer1[2 * i + 17];
                 shorts2[1] = buffer1[2 * i + 17 + 1];
                 int b = shorts2[0]*0x100 +shorts2[1];
+                if(b < 0){
+                    b = b+256;
+                }
                 dataList.add(String.valueOf(b));
+
             }
             return dataList;
         }

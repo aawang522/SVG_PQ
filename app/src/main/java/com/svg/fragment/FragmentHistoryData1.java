@@ -8,6 +8,7 @@ import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.ArrayMap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +59,8 @@ public class FragmentHistoryData1 extends Fragment implements HistoryResponseLis
     private String danwei;
     private byte length;
     private boolean showThreeOrTwo = true;
+    private boolean isHidden = false;
+    private boolean isPaused = false;
 
     @Nullable
     @Override
@@ -66,6 +69,12 @@ public class FragmentHistoryData1 extends Fragment implements HistoryResponseLis
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_historydata1, container, false);
         init(view);
+        // 获取数据
+        if(showThreeOrTwo) {
+            initDataABC(A1,A2,B1,B2,C1,C2);
+        } else {
+            initData(start1, start2, after1, after2);
+        }
         return view;
     }
 
@@ -245,6 +254,7 @@ public class FragmentHistoryData1 extends Fragment implements HistoryResponseLis
     public boolean handleMessage(Message msg) {
         switch (msg.what){
             case 3001:
+                Log.d("dingshi",  "获取历史1");
                 Map<String, byte[]> map = new ArrayMap<>();
                 map = (Map<String, byte[]>)msg.obj;
                 if(showThreeOrTwo) {
@@ -262,7 +272,26 @@ public class FragmentHistoryData1 extends Fragment implements HistoryResponseLis
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
+        isHidden = hidden;
         if(!hidden){
+            if(showThreeOrTwo) {
+                initDataABC(A1,A2,B1,B2,C1,C2);
+            } else {
+                initData(start1, start2, after1, after2);
+            }
+        } else {
+            if(null != handler) {
+                handler.removeMessages(3001);
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // 开屏时，判断如果是在当前界面又是刚从关屏状态过来，就继续定时更新
+        if(!isHidden && isPaused) {
+            isPaused = false;
             if(showThreeOrTwo) {
                 initDataABC(A1,A2,B1,B2,C1,C2);
             } else {
@@ -272,12 +301,12 @@ public class FragmentHistoryData1 extends Fragment implements HistoryResponseLis
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if(showThreeOrTwo) {
-            initDataABC(A1,A2,B1,B2,C1,C2);
-        } else {
-            initData(start1, start2, after1, after2);
+    public void onPause() {
+        super.onPause();
+        // 关屏时，记录isPaused状态位，清空消息，停止定时更新
+        isPaused = true;
+        if(null != handler) {
+            handler.removeMessages(3001);
         }
     }
 }

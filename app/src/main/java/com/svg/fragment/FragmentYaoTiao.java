@@ -6,12 +6,12 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.svg.R;
+import com.svg.utils.CommUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +32,7 @@ public class FragmentYaoTiao extends Fragment  {
     private FragmentYaotiaoData5 fg5;
     private FragmentYaotiaoData6 fg6;
     private FragmentKongzhi fg7;
+    private int position = 0;
 
     @Nullable
     @Override
@@ -76,11 +77,12 @@ public class FragmentYaoTiao extends Fragment  {
         mTab.addTab(mTab.newTab().setText(mTitles.get(4)));
         mTab.addTab(mTab.newTab().setText(mTitles.get(5)));
         mTab.addTab(mTab.newTab().setText(mTitles.get(6)));
-        setChioceItem(0);
+        setChioceItem(position);
         mTab.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                setChioceItem(tab.getPosition());
+                position = tab.getPosition();
+                setChioceItem(position);
             }
 
             @Override
@@ -102,9 +104,11 @@ public class FragmentYaoTiao extends Fragment  {
     private void setChioceItem(int index) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         hideFragments(fragmentTransaction);
+        // 隐藏软键盘
+        CommUtil.hideIputKeyboard(getContext());
         switch (index) {
             case 0:
-                if (fg1 == null) {
+                if (null == fg1) {
                     fg1 = new FragmentYaotiaoData1();
                     fragmentTransaction.add(R.id.yaotiao_fragment_container, fg1);
                 } else {
@@ -113,7 +117,7 @@ public class FragmentYaoTiao extends Fragment  {
                 }
                 break;
             case 1:
-                if (fg2 == null) {
+                if (null == fg2) {
                     fg2 = new FragmentYaotiaoData2();
                     fragmentTransaction.add(R.id.yaotiao_fragment_container, fg2);
                 } else {
@@ -121,7 +125,7 @@ public class FragmentYaoTiao extends Fragment  {
                 }
                 break;
             case 2:
-                if (fg3 == null) {
+                if (null == fg3) {
                     fg3 = new FragmentYaotiaoData3();
                     fragmentTransaction.add(R.id.yaotiao_fragment_container, fg3);
                 } else {
@@ -129,7 +133,7 @@ public class FragmentYaoTiao extends Fragment  {
                 }
                 break;
             case 3:
-                if (fg4 == null) {
+                if (null == fg4) {
                     fg4 = new FragmentYaotiaoData4();
                     fragmentTransaction.add(R.id.yaotiao_fragment_container, fg4);
                 } else {
@@ -138,7 +142,7 @@ public class FragmentYaoTiao extends Fragment  {
                 }
                 break;
             case 4:
-                if (fg5 == null) {
+                if (null == fg5) {
                     fg5 = new FragmentYaotiaoData5();
                     fragmentTransaction.add(R.id.yaotiao_fragment_container, fg5);
                 } else {
@@ -146,7 +150,7 @@ public class FragmentYaoTiao extends Fragment  {
                 }
                 break;
             case 5:
-                if (fg6 == null) {
+                if (null == fg6) {
                     fg6 = new FragmentYaotiaoData6();
                     fragmentTransaction.add(R.id.yaotiao_fragment_container, fg6);
                 } else {
@@ -154,7 +158,7 @@ public class FragmentYaoTiao extends Fragment  {
                 }
                 break;
             case 6:
-                if (fg7 == null) {
+                if (null == fg7) {
                     fg7 = new FragmentKongzhi();
                     fragmentTransaction.add(R.id.yaotiao_fragment_container, fg7);
                 } else {
@@ -170,25 +174,25 @@ public class FragmentYaoTiao extends Fragment  {
      * @param fragmentTransaction
      */
     private void hideFragments(FragmentTransaction fragmentTransaction) {
-        if (fg1 != null) {
+        if (null != fg1) {
             fragmentTransaction.hide(fg1);
         }
-        if (fg2 != null) {
+        if (null != fg2) {
             fragmentTransaction.hide(fg2);
         }
-        if (fg3 != null) {
+        if (null != fg3) {
             fragmentTransaction.hide(fg3);
         }
-        if (fg4 != null) {
+        if (null != fg4) {
             fragmentTransaction.hide(fg4);
         }
-        if (fg5 != null) {
+        if (null != fg5) {
             fragmentTransaction.hide(fg5);
         }
-        if (fg6 != null) {
+        if (null != fg6) {
             fragmentTransaction.hide(fg6);
         }
-        if (fg7 != null) {
+        if (null != fg7) {
             fragmentTransaction.hide(fg7);
         }
     }
@@ -197,15 +201,17 @@ public class FragmentYaoTiao extends Fragment  {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if(!hidden){
-            Log.d("fragment_yaotiao", "onHiddenChanged_show");
+            setChioceItem(position);
         } else {
-            Log.d("fragment_yaotiao", "onHiddenChanged_hide");
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            hideFragments(fragmentTransaction);
+            fragmentTransaction.commit(); // 提交
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("fragment_yaotiao", "onResume");
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        setChioceItem(position);
+//    }
 }

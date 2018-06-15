@@ -217,7 +217,8 @@
                 />
             <EditText
                 android:id="@+id/yaotiao_yxms"
-                style="@style/WorkInfoRightEditText_Fudianshu"/>
+                style="@style/WorkInfoRightEditText_Fudianshu"
+                android:inputType="number"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

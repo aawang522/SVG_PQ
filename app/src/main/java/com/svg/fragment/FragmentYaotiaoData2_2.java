@@ -45,6 +45,8 @@ public class FragmentYaotiaoData2_2 extends Fragment implements ModbusResponseLi
     private ModbusResponseListner responseListner;
     private List<EditText> textList = new ArrayList<>();
     private Handler handler;
+    private boolean isHidden = false;
+    private boolean isPaused = false;
 
     @Nullable
     @Override
@@ -53,6 +55,7 @@ public class FragmentYaotiaoData2_2 extends Fragment implements ModbusResponseLi
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_yaotiao_data2_2, container, false);
         init(view);
+        getData();
         return view;
     }
 
@@ -194,9 +197,11 @@ public class FragmentYaotiaoData2_2 extends Fragment implements ModbusResponseLi
             case 1202:
                 List<String> dataList = new ArrayList<>();
                 dataList = parsing_YaoTiaoData2((byte[])msg.obj);
-                for (int i = 0; i<textList.size();i++){
-                    if(null != textList.get(i)) {
-                        textList.get(i).setText(String.valueOf(dataList.get(i)));
+                if(null != dataList && 0 < dataList.size()) {
+                    for (int i = 0; i < textList.size(); i++) {
+                        if (null != textList.get(i)) {
+                            textList.get(i).setText(String.valueOf(dataList.get(i)));
+                        }
                     }
                 }
                 break;
@@ -212,15 +217,36 @@ public class FragmentYaotiaoData2_2 extends Fragment implements ModbusResponseLi
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
+        isHidden = hidden;
         if(!hidden){
             getData();
+        } else {
+            if(null != handler) {
+                handler.removeMessages(1202);
+                handler.removeMessages(1212);
+            }
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getData();
+        // 开屏时，判断如果是在当前界面又是刚从关屏状态过来，就继续定时更新
+        if(!isHidden && isPaused) {
+            isPaused = false;
+            getData();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // 关屏时，记录isPaused状态位，清空消息，停止定时更新
+        isPaused = true;
+        if(null != handler) {
+            handler.removeMessages(1202);
+            handler.removeMessages(1212);
+        }
     }
 
     /**
