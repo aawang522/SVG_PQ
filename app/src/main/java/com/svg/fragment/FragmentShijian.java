@@ -15,6 +15,8 @@ import com.svg.ConnectModbus;
 import com.svg.R;
 import com.svg.adapter.AdapterShijian;
 import com.svg.bean.ShijianBean;
+import com.svg.utils.CommUtil;
+import com.svg.utils.LoginingAnimation;
 import com.svg.utils.ModbusResponseListner;
 
 import java.util.ArrayList;
@@ -35,9 +37,11 @@ public class FragmentShijian extends Fragment  implements ModbusResponseListner,
     private ModbusResponseListner responseListner;
     private Handler handler;
     private int count = 0;
+    private int listCount = 0;
     private Timer timer;
     private boolean isHidden = false;
     private boolean isPaused = false;
+    private LoginingAnimation loginingAnimation;
 
     /**
      * 计时器，每隔5s更新数据
@@ -75,11 +79,14 @@ public class FragmentShijian extends Fragment  implements ModbusResponseListner,
     private void init(View view){
         responseListner = this;
         handler = new Handler(this);
-
+        loginingAnimation = new LoginingAnimation(getContext());
         listShijian = (ListView) view.findViewById(R.id.listShijian);
     }
 
     private void initData(){
+        if(null != loginingAnimation && !loginingAnimation.isShowed()) {
+            loginingAnimation.showLoading();
+        }
         // 设置请求报文
         byte[] requestOriginalData = setRequestData();
         // 调用连接modbus函数
@@ -122,12 +129,24 @@ public class FragmentShijian extends Fragment  implements ModbusResponseListner,
         handler.sendMessage(message);
     }
 
+    @Override
+    public void failedResponse() {
+        Message message = new Message();
+        message.what = 820;
+        handler.sendMessageDelayed(message, 3000);
+    }
+
     /**
      * 获取提交返回报文的回调
      * @param data
      */
     @Override
     public void getSubmitResponseData(byte[] data) {
+    }
+
+    @Override
+    public void submitFailedResponse() {
+
     }
 
     @Override
@@ -142,8 +161,14 @@ public class FragmentShijian extends Fragment  implements ModbusResponseListner,
                 }
                 List<ShijianBean> dataList = new ArrayList<>();
                 dataList = ConnectModbus.parsingWei_Shijian((byte[])msg.obj);
-                if(null != dataList && 0 < dataList.size() && 5 > count) {
-                    listInfo.addAll(dataList);
+                if(null != dataList && 0 < dataList.size() && null != listInfo && 50 > listCount) {
+                    for(int i = 0 ;i<dataList.size();i++) {
+                        listCount++;
+                        listInfo.add(dataList.get(i));
+                        if(50 <= listCount){
+                            break;
+                        }
+                    }
                     if(null == adapterShijian) {
                         adapterShijian = new AdapterShijian(getContext(), listInfo);
                         listShijian.setAdapter(adapterShijian);
@@ -154,11 +179,24 @@ public class FragmentShijian extends Fragment  implements ModbusResponseListner,
                 count++;
                 if(5 > count) {
                     initData();
+                } else {
+                    if (null != loginingAnimation && loginingAnimation.isShowed()) {
+                        loginingAnimation.dismissLoading();
+                    }
                 }
                 break;
             case 4010:
                 count = 0;
+                listCount = 0;
                 initData();
+                break;
+            case 820:
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
+                if(CommUtil.isNetworkConnected(getContext())) {
+                    CommUtil.showToast(getContext(), "数据刷新失败");
+                }
                 break;
         }
         return false;
@@ -173,6 +211,7 @@ public class FragmentShijian extends Fragment  implements ModbusResponseListner,
         }
         if (!hidden) {
             count = 0;
+            listCount = 0;
             startTimer();
         } else {
             if (null != handler) {

@@ -17,6 +17,7 @@ import com.luoshihai.xxdialog.XXDialog;
 import com.svg.ConnectModbus;
 import com.svg.R;
 import com.svg.utils.CommUtil;
+import com.svg.utils.LoginingAnimation;
 import com.svg.utils.ModbusResponseListner;
 
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class FragmentYaotiaoData2_2 extends Fragment implements ModbusResponseLi
     private Handler handler;
     private boolean isHidden = false;
     private boolean isPaused = false;
+    private LoginingAnimation loginingAnimation;
 
     @Nullable
     @Override
@@ -66,6 +68,7 @@ public class FragmentYaotiaoData2_2 extends Fragment implements ModbusResponseLi
     private void init(View view){
         responseListner = this;
         handler = new Handler(this);
+        loginingAnimation = new LoginingAnimation(getContext());
 
         yaotiao_xb1sn = (EditText)view.findViewById(R.id.yaotiao2_xb1sn);
         yaotiao_xb2sn = (EditText)view.findViewById(R.id.yaotiao2_xb2sn);
@@ -108,6 +111,9 @@ public class FragmentYaotiaoData2_2 extends Fragment implements ModbusResponseLi
     }
 
     private void getData(){
+        if(null != loginingAnimation) {
+            loginingAnimation.showLoading();
+        }
         // 设置请求报文
         byte[] requestOriginalData = setRequestData();
         // 调用连接modbus函数
@@ -118,6 +124,9 @@ public class FragmentYaotiaoData2_2 extends Fragment implements ModbusResponseLi
      * 提交信息
      */
     private void submitData(){
+        if(null != loginingAnimation) {
+            loginingAnimation.showLoading();
+        }
         // 调用连接modbus函数
         ConnectModbus.submitDataWithTCPSocket(setSubmitRequestData(), responseListner);
     }
@@ -179,6 +188,13 @@ public class FragmentYaotiaoData2_2 extends Fragment implements ModbusResponseLi
         handler.sendMessage(message);
     }
 
+    @Override
+    public void failedResponse() {
+        Message message = new Message();
+        message.what = 814;
+        handler.sendMessageDelayed(message, 1000);
+    }
+
     /**
      * 获取提交返回报文的回调
      * @param data
@@ -192,6 +208,13 @@ public class FragmentYaotiaoData2_2 extends Fragment implements ModbusResponseLi
     }
 
     @Override
+    public void submitFailedResponse() {
+        Message message = new Message();
+        message.what = 8140;
+        handler.sendMessage(message);
+    }
+
+    @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what){
             case 1202:
@@ -199,16 +222,38 @@ public class FragmentYaotiaoData2_2 extends Fragment implements ModbusResponseLi
                 dataList = parsing_YaoTiaoData2((byte[])msg.obj);
                 if(null != dataList && 0 < dataList.size()) {
                     for (int i = 0; i < textList.size(); i++) {
-                        if (null != textList.get(i)) {
+                        if (i < textList.size() && null != textList.get(i)) {
                             textList.get(i).setText(String.valueOf(dataList.get(i)));
                         }
                     }
                 }
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
                 break;
             case 1212:
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
                 byte[] data = (byte[])msg.obj;
                 Toast.makeText(getContext(), "提交成功", Toast.LENGTH_SHORT).show();
                 getData();
+                break;
+            case 814:
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
+                if(CommUtil.isNetworkConnected(getContext())) {
+                    CommUtil.showToast(getContext(), "数据刷新失败");
+                }
+                break;
+            case 8140:
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
+                if(CommUtil.isNetworkConnected(getContext())) {
+                    CommUtil.showToast(getContext(), "数据提交失败");
+                }
                 break;
         }
         return false;

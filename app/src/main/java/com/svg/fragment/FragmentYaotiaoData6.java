@@ -19,6 +19,7 @@ import com.svg.ConnectModbus;
 import com.svg.R;
 import com.svg.common.MyApp;
 import com.svg.utils.CommUtil;
+import com.svg.utils.LoginingAnimation;
 import com.svg.utils.ModbusResponseListner;
 
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ public class FragmentYaotiaoData6 extends Fragment implements ModbusResponseList
     private boolean flag = false;
     private boolean isHidden = false;
     private boolean isPaused = false;
+    private LoginingAnimation loginingAnimation;
 
     @Nullable
     @Override
@@ -74,6 +76,8 @@ public class FragmentYaotiaoData6 extends Fragment implements ModbusResponseList
     private void init(View view){
         responseListner = this;
         handler = new Handler(this);
+        loginingAnimation = new LoginingAnimation(getContext());
+
         yaotiao_gybh1 = (CheckBox)view.findViewById(R.id.yaotiao_gybh1);
         yaotiao_gybh2 = (CheckBox)view.findViewById(R.id.yaotiao_gybh2);
         yaotiao_qybh1 = (CheckBox)view.findViewById(R.id.yaotiao_qybh1);
@@ -225,6 +229,9 @@ public class FragmentYaotiaoData6 extends Fragment implements ModbusResponseList
      * 获取信息
      */
     private void getData(){
+        if(null != loginingAnimation) {
+            loginingAnimation.showLoading();
+        }
         btn_data6commit.setEnabled(false);
         flag = false;
         // 设置请求报文
@@ -237,6 +244,9 @@ public class FragmentYaotiaoData6 extends Fragment implements ModbusResponseList
      * 提交信息
      */
     private void submitData(){
+        if(null != loginingAnimation) {
+            loginingAnimation.showLoading();
+        }
         // 调用连接modbus函数
         ConnectModbus.submitDataWithTCPSocket(submitBytes, responseListner);
     }
@@ -298,6 +308,13 @@ public class FragmentYaotiaoData6 extends Fragment implements ModbusResponseList
         handler.sendMessage(message);
     }
 
+    @Override
+    public void failedResponse() {
+        Message message = new Message();
+        message.what = 818;
+        handler.sendMessageDelayed(message, 1000);
+    }
+
     /**
      * 获取提交返回报文的回调
      * @param data
@@ -307,6 +324,13 @@ public class FragmentYaotiaoData6 extends Fragment implements ModbusResponseList
         Message message = new Message();
         message.what = 1016;
         message.obj = data;
+        handler.sendMessage(message);
+    }
+
+    @Override
+    public void submitFailedResponse() {
+        Message message = new Message();
+        message.what = 8180;
         handler.sendMessage(message);
     }
 
@@ -323,12 +347,33 @@ public class FragmentYaotiaoData6 extends Fragment implements ModbusResponseList
                 }
                 btn_data6commit.setEnabled(true);
                 flag = true;
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
                 break;
-
             case 1016:
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
                 byte[] data = (byte[])msg.obj;
                 Toast.makeText(getContext(), "提交成功", Toast.LENGTH_SHORT).show();
                 getData();
+                break;
+            case 818:
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
+                if(CommUtil.isNetworkConnected(getContext())) {
+                    CommUtil.showToast(getContext(), "数据刷新失败");
+                }
+                break;
+            case 8180:
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
+                if(CommUtil.isNetworkConnected(getContext())) {
+                    CommUtil.showToast(getContext(), "数据提交失败");
+                }
                 break;
         }
         return false;

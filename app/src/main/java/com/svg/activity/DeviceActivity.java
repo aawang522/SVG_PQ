@@ -108,15 +108,48 @@ public class DeviceActivity extends AppCompatActivity implements View.OnClickLis
                     if(byWifi) {
                         // wifi热点近距离连接
                         InetSocketAddress isa = new InetSocketAddress("192.168.1.1", 8887);
-                        MyApp.socket.connect(isa, 10000);
 
+                        MyApp.socket.connect(isa, 10000);
+                        // 设置 socket 读取数据流的超时时间
+                        MyApp.socket.setSoTimeout(5000);
+                        // 发送数据包，默认为 false，即客户端发送数据采用 Nagle 算法；
+                        // 但是对于实时交互性高的程序，建议其改为 true，即关闭 Nagle 算法，客户端每发送一次数据，无论数据包大小都会将这些数据发送出去
+                        MyApp.socket.setTcpNoDelay(true);
+                        // 设置客户端 socket 关闭时，close() 方法起作用时延迟 30 秒关闭，如果 30 秒内尽量将未发送的数据包发送出去
+                        MyApp.socket.setSoLinger(true, 30);
+                        // 设置输出流的发送缓冲区大小，默认是4KB，即4096字节
+                        MyApp.socket.setSendBufferSize(4096);
+                        // 设置输入流的接收缓冲区大小，默认是4KB，即4096字节
+                        MyApp.socket.setReceiveBufferSize(4096);
+                        // 作用：每隔一段时间检查服务器是否处于活动状态，如果服务器端长时间没响应，自动关闭客户端socket
+                        // 防止服务器端无效时，客户端长时间处于连接状态
+                        MyApp.socket.setKeepAlive(true);
+
+                        SPUtils.put(DeviceActivity.this, SysCode.APP_SOCKET, MyApp.socket);
                         Intent intent = new Intent(DeviceActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
                     } else {
                         // 4G远距离连接 6000 9000
                         InetSocketAddress isa = new InetSocketAddress("218.2.153.198", 9000);
+
                         MyApp.socket.connect(isa, 10000);
+                        // 设置 socket 读取数据流的超时时间
+                        MyApp.socket.setSoTimeout(5000);
+                        // 发送数据包，默认为 false，即客户端发送数据采用 Nagle 算法；
+                        // 但是对于实时交互性高的程序，建议其改为 true，即关闭 Nagle 算法，客户端每发送一次数据，无论数据包大小都会将这些数据发送出去
+                        MyApp.socket.setTcpNoDelay(true);
+                        // 设置客户端 socket 关闭时，close() 方法起作用时延迟 30 秒关闭，如果 30 秒内尽量将未发送的数据包发送出去
+                        MyApp.socket.setSoLinger(true, 30);
+                        // 设置输出流的发送缓冲区大小，默认是4KB，即4096字节
+                        MyApp.socket.setSendBufferSize(4096);
+                        // 设置输入流的接收缓冲区大小，默认是4KB，即4096字节
+                        MyApp.socket.setReceiveBufferSize(4096);
+                        // 作用：每隔一段时间检查服务器是否处于活动状态，如果服务器端长时间没响应，自动关闭客户端socket
+                        // 防止服务器端无效时，客户端长时间处于连接状态
+                        MyApp.socket.setKeepAlive(true);
+
+                        SPUtils.put(DeviceActivity.this, SysCode.APP_SOCKET, MyApp.socket);
                     }
                     isConnected = true;
                     ConnectCount = 0;
@@ -147,7 +180,17 @@ public class DeviceActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
+    public void failedResponse() {
+
+    }
+
+    @Override
     public void getSubmitResponseData(byte[] data) {
+
+    }
+
+    @Override
+    public void submitFailedResponse() {
 
     }
 

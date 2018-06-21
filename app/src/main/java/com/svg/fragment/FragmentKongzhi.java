@@ -19,6 +19,7 @@ import com.svg.ConnectModbus;
 import com.svg.R;
 import com.svg.common.MyApp;
 import com.svg.utils.CommUtil;
+import com.svg.utils.LoginingAnimation;
 import com.svg.utils.ModbusResponseListner;
 
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public class FragmentKongzhi extends Fragment implements ModbusResponseListner, 
     private Button btn_kongzhi;
     private ModbusResponseListner responseListner;
     private Handler handler;
+    private LoginingAnimation loginingAnimation;
 
     @Nullable
     @Override
@@ -52,6 +54,10 @@ public class FragmentKongzhi extends Fragment implements ModbusResponseListner, 
      * @param view
      */
     private void init(View view){
+        responseListner = this;
+        handler = new Handler(this);
+        loginingAnimation = new LoginingAnimation(getContext());
+
         checkZZQD = (CheckBox)view.findViewById(R.id.checkZZQD);
         checkZZTJ = (CheckBox)view.findViewById(R.id.checkZZTJ);
         checkZZFW = (CheckBox)view.findViewById(R.id.checkZZFW);
@@ -60,7 +66,6 @@ public class FragmentKongzhi extends Fragment implements ModbusResponseListner, 
         checkZZQD.setOnClickListener(this);
         checkZZTJ.setOnClickListener(this);
         checkZZFW.setOnClickListener(this);
-
     }
 
     @Override
@@ -91,8 +96,9 @@ public class FragmentKongzhi extends Fragment implements ModbusResponseListner, 
      * 提交信息
      */
     private void submitData(){
-        responseListner = this;
-        handler = new Handler(this);
+        if(null != loginingAnimation) {
+            loginingAnimation.showLoading();
+        }
         // 调用连接modbus函数
         ConnectModbus.submitDataWithTCPSocket(setSubmitRequestData(), responseListner);
     }
@@ -112,15 +118,20 @@ public class FragmentKongzhi extends Fragment implements ModbusResponseListner, 
         buffer1[3] = (byte)0x1E;
         buffer1[4] = 0x00;
         buffer1[5] = 0x01;
-        buffer1[6] = 0x01;
+        buffer1[6] = 0x02;
 
+        // 启动
         if(checkZZQD.isChecked()){
             buffer1[7] = 0x00;
             buffer1[8] = (byte) 0xAA;
-        } else if (checkZZTJ.isChecked()){
+        }
+        // 停机
+        else if (checkZZTJ.isChecked()){
             buffer1[7] = (byte) 0x55;
             buffer1[8] = 0x00;
-        }  else if (checkZZFW.isChecked()){
+        }
+        // 复位
+        else if (checkZZFW.isChecked()){
             buffer1[7] = (byte) 0xCC;
             buffer1[8] = 0x00;
         }
@@ -133,6 +144,11 @@ public class FragmentKongzhi extends Fragment implements ModbusResponseListner, 
      */
     @Override
     public void getResponseData(byte[] data) {
+
+    }
+
+    @Override
+    public void failedResponse() {
 
     }
 
@@ -149,11 +165,29 @@ public class FragmentKongzhi extends Fragment implements ModbusResponseListner, 
     }
 
     @Override
+    public void submitFailedResponse() {
+        Message message = new Message();
+        message.what = 807;
+        handler.sendMessage(message);
+    }
+
+    @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what){
             case 207:
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
                 byte[] data = (byte[])msg.obj;
                 Toast.makeText(getContext(), "提交成功", Toast.LENGTH_SHORT).show();
+                break;
+            case 807:
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
+                if(CommUtil.isNetworkConnected(getContext())) {
+                    CommUtil.showToast(getContext(), "数据提交失败");
+                }
                 break;
         }
         return false;

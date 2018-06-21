@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.svg.ConnectModbus;
 import com.svg.R;
+import com.svg.utils.CommUtil;
+import com.svg.utils.LoginingAnimation;
 import com.svg.utils.ModbusResponseListner;
 import com.svg.utils.MoneyValueFilter;
 
@@ -48,6 +50,7 @@ public class FragmentYaoceData3 extends Fragment implements ModbusResponseListne
     // 因为这里首次进来不会进入onHidden里改变状态，所以初设为false
     private boolean isHidden = false;
     private boolean isPaused = false;
+    private LoginingAnimation loginingAnimation;
 
     /**
      * 计时器，每隔5s更新数据
@@ -89,6 +92,7 @@ public class FragmentYaoceData3 extends Fragment implements ModbusResponseListne
     private void init(View view){
         responseListner = this;
         handler = new Handler(this);
+        loginingAnimation = new LoginingAnimation(getContext());
 
         yaoce_a1cxb = (TextView)view.findViewById(R.id.yaoce_a1cxb);
         yaoce_a2cxb = (TextView)view.findViewById(R.id.yaoce_a2cxb);
@@ -132,6 +136,9 @@ public class FragmentYaoceData3 extends Fragment implements ModbusResponseListne
     }
 
     private void initData(){
+        if(null != loginingAnimation) {
+            loginingAnimation.showLoading();
+        }
         // 设置请求报文
         byte[] requestOriginalData = setRequestData();
         // 调用连接modbus函数
@@ -168,12 +175,23 @@ public class FragmentYaoceData3 extends Fragment implements ModbusResponseListne
         handler.sendMessage(message);
     }
 
+    @Override
+    public void failedResponse() {
+        Message message = new Message();
+        message.what = 803;
+        handler.sendMessageDelayed(message, 1000);
+    }
+
     /**
      * 获取提交返回报文的回调
      * @param data
      */
     @Override
     public void getSubmitResponseData(byte[] data) {
+    }
+
+    @Override
+    public void submitFailedResponse() {
     }
 
     @Override
@@ -190,9 +208,20 @@ public class FragmentYaoceData3 extends Fragment implements ModbusResponseListne
                         }
                     }
                 }
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
                 break;
             case 1030:
                 initData();
+                break;
+            case 803:
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
+                if(CommUtil.isNetworkConnected(getContext())) {
+                    CommUtil.showToast(getContext(), "数据刷新失败");
+                }
                 break;
         }
         return false;

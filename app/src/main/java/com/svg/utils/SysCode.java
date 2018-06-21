@@ -56,7 +56,7 @@ public class SysCode {
     public static final String USER_OR_SUPPER = "userOrSupper";
     public static final String LOGIN_SUPPER = "loginSupper";
     public static final String LOGIN_USER = "loginUser";
-    public static final String OBJECT_ID = "objectID";
+    public static final String APP_SOCKET = "app_socket";
     public static final String ATVIID = "atviID";
     public static final String SET_IP = "setIp";
     public static final String SET_PORT = "setPort";

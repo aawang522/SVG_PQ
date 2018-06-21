@@ -21,6 +21,7 @@ import com.svg.R;
 import com.svg.common.MyApp;
 import com.svg.utils.CommUtil;
 import com.svg.utils.HistoryResponseListner;
+import com.svg.utils.LoginingAnimation;
 import com.svg.utils.ModbusResponseListner;
 import com.svg.utils.MoneyValueFilter;
 
@@ -56,6 +57,7 @@ public class FragmentYaotiaoData2_1 extends Fragment implements ModbusResponseLi
     private Handler handler;
     private boolean isHidden = false;
     private boolean isPaused = false;
+    private LoginingAnimation loginingAnimation;
 
     @Nullable
     @Override
@@ -76,6 +78,8 @@ public class FragmentYaotiaoData2_1 extends Fragment implements ModbusResponseLi
         responseListner1 = this;
         responseListner2 = this;
         handler = new Handler(this);
+        loginingAnimation = new LoginingAnimation(getContext());
+
         yaotiao_eddl = (EditText)view.findViewById(R.id.yaotiao2_eddl);
         yaotiao_blts = (EditText)view.findViewById(R.id.yaotiao2_blts);
         yaotiao_ctbb = (EditText)view.findViewById(R.id.yaotiao2_ctbb);
@@ -125,6 +129,9 @@ public class FragmentYaotiaoData2_1 extends Fragment implements ModbusResponseLi
     }
 
     private void getData(){
+        if(null != loginingAnimation) {
+            loginingAnimation.showLoading();
+        }
         // 设置A请求报文
         byte[] requestOriginalData1 = setRequestData1();
         // 设置B请求报文
@@ -194,6 +201,9 @@ public class FragmentYaotiaoData2_1 extends Fragment implements ModbusResponseLi
      * 提交信息
      */
     private void submitData(){
+        if(null != loginingAnimation) {
+            loginingAnimation.showLoading();
+        }
         // 设置A请求报文
         byte[] requestOriginalData1 = setSubmitRequestData1();
         // 设置B请求报文
@@ -328,6 +338,13 @@ public class FragmentYaotiaoData2_1 extends Fragment implements ModbusResponseLi
     public void getResponseData(byte[] data) {
     }
 
+    @Override
+    public void failedResponse() {
+        Message message = new Message();
+        message.what = 813;
+        handler.sendMessageDelayed(message, 1000);
+    }
+
     /**
      * 获取提交返回报文的回调
      * @param data
@@ -341,17 +358,46 @@ public class FragmentYaotiaoData2_1 extends Fragment implements ModbusResponseLi
     }
 
     @Override
+    public void submitFailedResponse() {
+        Message message = new Message();
+        message.what = 8130;
+        handler.sendMessage(message);
+    }
+
+    @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what){
             case 1201:
                 Map<String, byte[]> map = new ArrayMap<>();
                 map = (Map<String, byte[]>)msg.obj;
                 setContentDatas(map);
+                if(null != loginingAnimation && loginingAnimation.isShowed()){
+                    loginingAnimation.dismissLoading();
+                }
                 break;
             case 1211:
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
                 byte[] data = (byte[])msg.obj;
                 Toast.makeText(getContext(), "提交成功", Toast.LENGTH_SHORT).show();
                 getData();
+                break;
+            case 813:
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
+                if(CommUtil.isNetworkConnected(getContext())) {
+                    CommUtil.showToast(getContext(), "数据刷新失败");
+                }
+                break;
+            case 8130:
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
+                if(CommUtil.isNetworkConnected(getContext())) {
+                    CommUtil.showToast(getContext(), "数据提交失败");
+                }
                 break;
         }
         return false;

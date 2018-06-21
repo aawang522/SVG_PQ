@@ -18,6 +18,7 @@ import com.luoshihai.xxdialog.XXDialog;
 import com.svg.ConnectModbus;
 import com.svg.R;
 import com.svg.utils.CommUtil;
+import com.svg.utils.LoginingAnimation;
 import com.svg.utils.ModbusResponseListner;
 import com.svg.utils.MoneyValueFilter;
 
@@ -46,6 +47,7 @@ public class FragmentYaotiaoData5 extends Fragment implements ModbusResponseList
     private static byte[] data6Info = new byte[6];
     private boolean isHidden = false;
     private boolean isPaused = false;
+    private LoginingAnimation loginingAnimation;
 
     @Nullable
     @Override
@@ -65,6 +67,7 @@ public class FragmentYaotiaoData5 extends Fragment implements ModbusResponseList
     private void init(View view){
         responseListner = this;
         handler = new Handler(this);
+        loginingAnimation = new LoginingAnimation(getContext());
 
         yaotiao_wgzldl = (EditText)view.findViewById(R.id.yaotiao_wgzldl);
         yaotiao_ppdxkz = (EditText)view.findViewById(R.id.yaotiao_ppdxkz);
@@ -110,6 +113,9 @@ public class FragmentYaotiaoData5 extends Fragment implements ModbusResponseList
     }
 
     private void getData(){
+        if(null != loginingAnimation) {
+            loginingAnimation.showLoading();
+        }
         // 设置请求报文
         byte[] requestOriginalData = setRequestData();
         // 调用连接modbus函数
@@ -120,6 +126,9 @@ public class FragmentYaotiaoData5 extends Fragment implements ModbusResponseList
      * 提交信息
      */
     private void submitData(){
+        if(null != loginingAnimation) {
+            loginingAnimation.showLoading();
+        }
         // 调用连接modbus函数
         ConnectModbus.submitDataWithTCPSocket(setSubmitRequestData(), responseListner);
     }
@@ -197,6 +206,13 @@ public class FragmentYaotiaoData5 extends Fragment implements ModbusResponseList
         handler.sendMessage(message);
     }
 
+    @Override
+    public void failedResponse() {
+        Message message = new Message();
+        message.what = 817;
+        handler.sendMessageDelayed(message, 1000);
+    }
+
     /**
      * 获取提交返回报文的回调
      * @param data
@@ -206,6 +222,13 @@ public class FragmentYaotiaoData5 extends Fragment implements ModbusResponseList
         Message message = new Message();
         message.what = 1015;
         message.obj = data;
+        handler.sendMessage(message);
+    }
+
+    @Override
+    public void submitFailedResponse() {
+        Message message = new Message();
+        message.what = 8170;
         handler.sendMessage(message);
     }
 
@@ -228,11 +251,33 @@ public class FragmentYaotiaoData5 extends Fragment implements ModbusResponseList
                         }
                     }
                 }
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
                 break;
             case 1015:
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
                 byte[] data = (byte[])msg.obj;
                 Toast.makeText(getContext(), "提交成功", Toast.LENGTH_SHORT).show();
                 getData();
+                break;
+            case 817:
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
+                if(CommUtil.isNetworkConnected(getContext())) {
+                    CommUtil.showToast(getContext(), "数据刷新失败");
+                }
+                break;
+            case 8170:
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
+                if(CommUtil.isNetworkConnected(getContext())) {
+                    CommUtil.showToast(getContext(), "数据提交失败");
+                }
                 break;
         }
         return false;
@@ -311,16 +356,12 @@ public class FragmentYaotiaoData5 extends Fragment implements ModbusResponseList
             int dataLength = (buffer1[2] - 14)/2;
             // 根据数据的个数，一一展示在textview中
             for (int i = 0; i < dataLength; i++) {
-                short[] shorts2 = new short[2];
                 // 从第17位开始计算
-                shorts2[0] = buffer1[2 * i + 17];
-                shorts2[1] = buffer1[2 * i + 17 + 1];
-                int b = shorts2[0]*0x100 +shorts2[1];
-                if(b < 0){
-                    b = b+256;
-                }
+                int[] shorts2 = new int[2];
+                shorts2[0] = 0x00FF & buffer1[2 * i + 17];
+                shorts2[1] = 0x00FF & buffer1[2 * i + 17 + 1];
+                long b = shorts2[0]*0x100 +shorts2[1];
                 dataList.add(String.valueOf(b));
-
             }
             return dataList;
         }

@@ -10,6 +10,7 @@ import com.svg.bean.HistoryBean;
 import com.svg.bean.ShijianBean;
 import com.svg.common.MyApp;
 import com.svg.utils.HistoryResponseListner;
+import com.svg.utils.LoginingAnimation;
 import com.svg.utils.ModbusResponseListner;
 import com.svg.utils.SPUtils;
 import com.svg.utils.SysCode;
@@ -20,12 +21,14 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by Administrator on 2018/3/22.
@@ -145,28 +148,35 @@ public class ConnectModbus {
                         // 发送读取的数据到服务端
                         outputStream.flush();
 
-                        // 创建一个InputStream用户读取要发送的文件。
-                        InputStream inputStream = MyApp.socket.getInputStream();
-                        byte buffer[] = new byte[4 * 1024];
-                        inputStream.read(buffer);
+                            // 创建一个InputStream用户读取要发送的文件。
+                            InputStream inputStream = MyApp.socket.getInputStream();
+                            byte buffer[] = new byte[4 * 1024];
+                            inputStream.read(buffer);
 
-                        // 因为获取到的是十进制，这里需要转换成16进制
-                        // 01 03 10 45 7a 28 0a  45 a0 39 5e  3e 45 f1 8c 00 00 00 00 21 db
-                        responseListner.getResponseData(buffer);
-                    }
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    Log.d("ConnectModbus", "设备没有连接");
-                    e.printStackTrace();
-                    isConnected = false;
-                    if(3 >= ConnectCount) {
-                        connectSocket(true);
-                        if (isConnected) {
-                            connectServerWithTCPSocket(requestOriginaldata, responseListner);
+                            // 因为获取到的是十进制，这里需要转换成16进制
+                            // 01 03 10 45 7a 28 0a  45 a0 39 5e  3e 45 f1 8c 00 00 00 00 21 db
+                            responseListner.getResponseData(buffer);
+                        }
+                    } catch (UnknownHostException e) {
+                        Log.d("ConnectModbus", "UnknownHostException");
+                        e.printStackTrace();
+                        responseListner.failedResponse();
+                    } catch (SocketTimeoutException e) {
+                        Log.d("ConnectModbus", "SocketTimeoutException");
+                        responseListner.failedResponse();
+                    } catch (IOException e) {
+                        Log.d("ConnectModbus", "设备没有连接");
+                        e.printStackTrace();
+                        isConnected = false;
+                        responseListner.failedResponse();
+                        if (3 >= ConnectCount) {
+                            connectSocket(true);
+                            if (isConnected) {
+                                connectServerWithTCPSocket(requestOriginaldata, responseListner);
+                            }
+                        } else {
                         }
                     }
-                }
             }
         }.start();
     }
@@ -211,10 +221,15 @@ public class ConnectModbus {
                     }
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
+                    responseListner.failedResponse();
+                }  catch (SocketTimeoutException e){
+                    Log.d("ConnectModbus", "SocketTimeoutException");
+                    responseListner.failedResponse();
                 } catch (IOException e) {
                     Log.d("ConnectModbus", "设备没有连接");
                     e.printStackTrace();
                     isConnected = false;
+                    responseListner.failedResponse();
                     if(3 >= ConnectCount) {
                         connectSocket(true);
                         if (isConnected) {
@@ -277,10 +292,15 @@ public class ConnectModbus {
                     }
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
+                    responseListner.failedResponse();
+                } catch (SocketTimeoutException e){
+                    Log.d("ConnectModbus", "SocketTimeoutException");
+                    responseListner.failedResponse();
                 } catch (IOException e) {
                     Log.d("ConnectModbus", "设备没有连接");
                     e.printStackTrace();
                     isConnected = false;
+                    responseListner.failedResponse();
                     if(3 >= ConnectCount) {
                         connectSocket(true);
                         if (isConnected) {
@@ -320,10 +340,14 @@ public class ConnectModbus {
                     }
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
+                    responseListner.submitFailedResponse();
+                }  catch (SocketTimeoutException e){
+                    Log.d("ConnectModbus", "SocketTimeoutException");
+                    responseListner.submitFailedResponse();
                 } catch (IOException e) {
                     Log.d("ConnectModbus", "设备没有连接");
                     e.printStackTrace();
-
+                    responseListner.submitFailedResponse();
                     isConnected = false;
                     if(3 >= ConnectCount) {
                         connectSocket(true);
@@ -365,6 +389,10 @@ public class ConnectModbus {
                     }
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
+                    responseListner.submitFailedResponse();
+                } catch (SocketTimeoutException e){
+                    Log.d("ConnectModbus", "SocketTimeoutException");
+                    responseListner.submitFailedResponse();
                 } catch (IOException e) {
                     Log.d("ConnectModbus", "设备没有连接");
                     e.printStackTrace();
@@ -1023,8 +1051,8 @@ public class ConnectModbus {
                 h1 = (byteData)[24*j+21];
                 g1 = (byteData)[24*j+22];
 
-                // 7206(D)   &0x03或者&0b11都可以直接得到与本身相同的值，以此来判断
-                if((a1 >> 1 & 0b11) == 0x00 && (a1 & 0x01) == 0x01){
+                // 7206(D)
+                if((a1 >> 1 & 0x01) == 0x00 && (a1 & 0x01) == 0x01){
                     ShijianBean shijianBean = new ShijianBean(date, time, "过压保护", "动作");
                     shijianBeanList.add(shijianBean);
                 } else if ((a1 >> 1 & 0x01) == 0x01 && (a1 & 0x01) == 0x00){

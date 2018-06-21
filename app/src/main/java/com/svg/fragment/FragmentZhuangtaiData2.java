@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.svg.ConnectModbus;
 import com.svg.R;
+import com.svg.utils.CommUtil;
+import com.svg.utils.LoginingAnimation;
 import com.svg.utils.ModbusResponseListner;
 
 import java.util.ArrayList;
@@ -45,6 +47,7 @@ public class FragmentZhuangtaiData2 extends Fragment implements ModbusResponseLi
     // 因为这里首次进来不会进入onHidden里改变状态，所以初设为false
     private boolean isHidden = false;
     private boolean isPaused = false;
+    private LoginingAnimation loginingAnimation;
 
     /**
      * 计时器，每隔5s更新数据
@@ -82,6 +85,7 @@ public class FragmentZhuangtaiData2 extends Fragment implements ModbusResponseLi
     private void init(View view){
         responseListner = this;
         handler = new Handler(this);
+        loginingAnimation = new LoginingAnimation(getContext());
 
         txtFBDRQ1A = (TextView)view.findViewById(R.id.txtFBDRQ1A);
         txtFBDRQ1B = (TextView)view.findViewById(R.id.txtFBDRQ1B);
@@ -110,6 +114,9 @@ public class FragmentZhuangtaiData2 extends Fragment implements ModbusResponseLi
     }
 
     private void initData(){
+        if(null != loginingAnimation) {
+            loginingAnimation.showLoading();
+        }
         // 设置请求报文
         byte[] requestOriginalData = setRequestData();
         // 调用连接modbus函数
@@ -146,12 +153,23 @@ public class FragmentZhuangtaiData2 extends Fragment implements ModbusResponseLi
         handler.sendMessage(message);
     }
 
+    @Override
+    public void failedResponse() {
+        Message message = new Message();
+        message.what = 832;
+        handler.sendMessageDelayed(message, 1000);
+    }
+
     /**
      * 获取提交返回报文的回调
      * @param data
      */
     @Override
     public void getSubmitResponseData(byte[] data) {
+    }
+
+    @Override
+    public void submitFailedResponse() {
     }
 
     @Override
@@ -170,9 +188,20 @@ public class FragmentZhuangtaiData2 extends Fragment implements ModbusResponseLi
                         }
                     }
                 }
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
                 break;
             case 2020:
                 initData();
+                break;
+            case 832:
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
+                if(CommUtil.isNetworkConnected(getContext())) {
+                    CommUtil.showToast(getContext(), "数据刷新失败");
+                }
                 break;
         }
         return false;

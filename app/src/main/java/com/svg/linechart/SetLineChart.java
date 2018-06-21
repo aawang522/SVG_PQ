@@ -17,6 +17,7 @@ import com.github.mikephil.chart_3_0_1v.utils.ViewPortHandler;
 import com.svg.ConnectModbus;
 import com.svg.R;
 import com.svg.bean.HistoryBean;
+import com.svg.utils.LoginingAnimation;
 import com.svg.utils.SysCode;
 
 import java.text.DecimalFormat;
@@ -34,7 +35,8 @@ public class SetLineChart {
      * @param data2
      */
     public static void setLineData(final Context context, final LineChartInViewPager lineChart,
-                                   byte[] data1, byte[] data2, String danwei, String type, byte length) {
+                                   byte[] data1, byte[] data2, String danwei, String type, byte length,
+                                   LoginingAnimation loginingAnimation) {
         HistoryBean historyBean1 = new HistoryBean();
         HistoryBean historyBean2 = new HistoryBean();
         List<Float> dataList1 = new ArrayList<>();
@@ -84,7 +86,7 @@ public class SetLineChart {
                         yoyListEntity.setYear("补偿后");
                         yoyList.add(yoyListEntity);
                     }
-                    SetLineChart.setLineChart(context, lineChart, yoyList, realList, danwei, type);
+                    SetLineChart.setLineChart(context, lineChart, yoyList, realList, danwei, type, loginingAnimation);
                 }
             }
         }
@@ -95,7 +97,8 @@ public class SetLineChart {
      * @param data2
      */
     public static void setLineDataABC(final Context context, final LineChartInViewPager lineChart,
-                                   byte[] data1, byte[] data2, byte[] data3, String danwei, String type, byte length) {
+                                   byte[] data1, byte[] data2, byte[] data3, String danwei, String type, byte length,
+                                              LoginingAnimation loginingAnimation) {
         HistoryBean historyBean1 = new HistoryBean();
         HistoryBean historyBean2 = new HistoryBean();
         HistoryBean historyBean3 = new HistoryBean();
@@ -169,14 +172,16 @@ public class SetLineChart {
                         yoyListEntity.setYear("C相");
                         CXList.add(yoyListEntity);
                     }
-                    setLineChartABC(context, lineChart, AXList, BXList, CXList, danwei, type);
+                    setLineChartABC(context, lineChart, AXList, BXList, CXList, danwei, type, loginingAnimation);
                 }
             }
         }
     }
 
-    public static void setLineChart(final Context context, final LineChartInViewPager lineChart, final List<YoyListEntity> yoyList,
-                                    final List<RealListEntity> realList, final String danwei, String type) {
+    public static void setLineChart(final Context context, final LineChartInViewPager lineChart,
+                                    final List<YoyListEntity> yoyList,
+                                    final List<RealListEntity> realList, final String danwei, String type,
+                                    LoginingAnimation loginingAnimation) {
         ArrayList values1 = new ArrayList<>();
         ArrayList values2 = new ArrayList<>();
         for (int i = 0; i < yoyList.size(); i++) {
@@ -227,14 +232,16 @@ public class SetLineChart {
             lastYear = yoyList.get(0).getYear();
         }
         String[] labels = new String[]{thisYear, lastYear};
-        updateLinehart(context, yoyList, realList, lineChart, callDurationColors, drawables, "", values1, values2, labels, danwei, type);
+        updateLinehart(context, yoyList, realList, lineChart, callDurationColors, drawables, "",
+                values1, values2, labels, danwei, type, loginingAnimation);
     }
 
     public static void setLineChartABC(final Context context, final LineChartInViewPager lineChart,
                                        final List<YoyListEntity> AXList,
                                        final List<YoyListEntity> BXList,
                                        final List<YoyListEntity> CXList,
-                                       final String danwei, String type) {
+                                       final String danwei, String type,
+                                       LoginingAnimation loginingAnimation) {
         ArrayList values1 = new ArrayList<>();
         ArrayList values2 = new ArrayList<>();
         ArrayList values3 = new ArrayList<>();
@@ -309,7 +316,7 @@ public class SetLineChart {
         }
         String[] labels = new String[]{thisYear, lastYear, CX};
         updateLinehartABC(context, AXList, BXList, CXList, lineChart, callDurationColors, drawables, "",
-                values1, values2, values3, labels, danwei, type);
+                values1, values2, values3, labels, danwei, type, loginingAnimation);
     }
 
     /**
@@ -325,8 +332,12 @@ public class SetLineChart {
      * @param values1
      * @param labels
      */
-    private static void updateLinehart(final Context context, final List<YoyListEntity> yoyList, final List<RealListEntity> realList, LineChart lineChart, int[] colors, Drawable[] drawables,
-                                       final String unit, List<Entry> values2, List<Entry> values1, final String[] labels, final String danwei, final String type) {
+    private static void updateLinehart(final Context context, final List<YoyListEntity> yoyList,
+                                       final List<RealListEntity> realList, LineChart lineChart,
+                                       int[] colors, Drawable[] drawables,
+                                       final String unit, List<Entry> values2, List<Entry> values1,
+                                       final String[] labels, final String danwei, final String type,
+                                       LoginingAnimation loginingAnimation) {
         final DecimalFormat mFormat = new DecimalFormat("#,###.##");
         List<Entry>[] entries = new ArrayList[2];
         entries[0] = values1;
@@ -424,6 +435,9 @@ public class SetLineChart {
         });
         lineChartEntity.setMarkView(markerView);
         lineChart.getData().setDrawValues(false);
+        if(null != loginingAnimation && loginingAnimation.isShowed()){
+            loginingAnimation.dismissLoading();
+        }
     }
 
     /**
@@ -444,7 +458,8 @@ public class SetLineChart {
                                           LineChart lineChart, int[] colors, Drawable[] drawables,
                                           final String unit,
                                           List<Entry> values1, List<Entry> values2, List<Entry> values3,
-                                          final String[] labels, final String danwei, final String type) {
+                                          final String[] labels, final String danwei, final String type,
+                                          LoginingAnimation loginingAnimation) {
         final DecimalFormat mFormat = new DecimalFormat("#,###.##");
         List<Entry>[] entries = new ArrayList[3];
         entries[0] = values1;
@@ -547,6 +562,9 @@ public class SetLineChart {
         });
         lineChartEntity.setMarkView(markerView);
         lineChart.getData().setDrawValues(false);
+        if(null != loginingAnimation && loginingAnimation.isShowed()){
+            loginingAnimation.dismissLoading();
+        }
     }
 
     /**
@@ -558,7 +576,6 @@ public class SetLineChart {
      */
     private static void toggleFilled(LineChartEntity lineChartEntity, Drawable[] drawables, int[] colors) {
         if (android.os.Build.VERSION.SDK_INT >= 18) {
-
             lineChartEntity.toggleFilled(drawables, null, true);
         } else {
             lineChartEntity.toggleFilled(null, colors, true);

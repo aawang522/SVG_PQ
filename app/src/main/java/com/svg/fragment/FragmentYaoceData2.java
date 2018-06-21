@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.svg.ConnectModbus;
 import com.svg.R;
+import com.svg.utils.CommUtil;
+import com.svg.utils.LoginingAnimation;
 import com.svg.utils.ModbusResponseListner;
 import com.svg.utils.MoneyValueFilter;
 
@@ -50,6 +52,7 @@ public class FragmentYaoceData2 extends Fragment implements ModbusResponseListne
     // 因为这里首次进来不会进入onHidden里改变状态，所以初设为false
     private boolean isHidden = false;
     private boolean isPaused = false;
+    private LoginingAnimation loginingAnimation;
 
     /**
      * 计时器，每隔5s更新数据
@@ -91,6 +94,7 @@ public class FragmentYaoceData2 extends Fragment implements ModbusResponseListne
     private void init(View view){
         responseListner = this;
         handler = new Handler(this);
+        loginingAnimation = new LoginingAnimation(getContext());
 
         yaoce_zxwcdl = (TextView)view.findViewById(R.id.yaoce_zxwcdl);
         yaoce_axwcjbdl = (TextView)view.findViewById(R.id.yaoce_axwcjbdl);
@@ -141,6 +145,9 @@ public class FragmentYaoceData2 extends Fragment implements ModbusResponseListne
     }
 
     private void initData(){
+        if(null != loginingAnimation) {
+            loginingAnimation.showLoading();
+        }
         // 设置请求报文
         byte[] requestOriginalData = setRequestData();
         // 调用连接modbus函数
@@ -177,6 +184,13 @@ public class FragmentYaoceData2 extends Fragment implements ModbusResponseListne
         handler.sendMessage(message);
     }
 
+    @Override
+    public void failedResponse() {
+        Message message = new Message();
+        message.what = 802;
+        handler.sendMessageDelayed(message, 1000);
+    }
+
     /**
      * 获取提交返回报文的回调
      * @param data
@@ -185,6 +199,9 @@ public class FragmentYaoceData2 extends Fragment implements ModbusResponseListne
     public void getSubmitResponseData(byte[] data) {
     }
 
+    @Override
+    public void submitFailedResponse() {
+    }
 
     @Override
     public boolean handleMessage(Message msg) {
@@ -200,9 +217,20 @@ public class FragmentYaoceData2 extends Fragment implements ModbusResponseListne
                         }
                     }
                 }
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
                 break;
             case 1020:
                 initData();
+                break;
+            case 802:
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
+                if(CommUtil.isNetworkConnected(getContext())) {
+                    CommUtil.showToast(getContext(), "数据刷新失败");
+                }
                 break;
         }
         return false;

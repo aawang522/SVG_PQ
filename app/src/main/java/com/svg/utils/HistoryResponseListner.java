@@ -13,4 +13,9 @@ public interface HistoryResponseListner {
      */
     public void getResponseData(Map<String, byte[]> map);
 
+    /**
+     * modbus请求失败
+     */
+    public void failedResponse();
+
 }

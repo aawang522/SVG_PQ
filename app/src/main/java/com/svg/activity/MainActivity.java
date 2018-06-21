@@ -22,6 +22,7 @@ import com.svg.utils.SPUtils;
 import com.svg.utils.SysCode;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -191,13 +192,20 @@ public class MainActivity extends AppCompatActivity {
      */
     public void closeSocket(){
         if (null != MyApp.socket && MyApp.socket.isConnected()) {
-            try {
+            new Thread(){
+                public void run() {
+                    try {
                 MyApp.socket.close();
                 MyApp.socket = null;
                 Log.d("ConnectModbus", "closeSocket");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+                    } catch (UnknownHostException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        Log.d("ConnectModbus", "设备连接失败");
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
         }
     }
 

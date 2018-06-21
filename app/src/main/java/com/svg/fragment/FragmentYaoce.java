@@ -154,10 +154,4 @@ public class FragmentYaoce extends Fragment{
             fragmentTransaction.commit(); // 提交
         }
     }
-
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        setChioceItem(position);
-//    }
 }

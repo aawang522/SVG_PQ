@@ -18,7 +18,9 @@ import com.svg.R;
 import com.svg.common.MyApp;
 import com.svg.linechart.LineChartInViewPager;
 import com.svg.linechart.SetLineChart;
+import com.svg.utils.CommUtil;
 import com.svg.utils.HistoryResponseListner;
+import com.svg.utils.LoginingAnimation;
 import com.svg.utils.RadioGroupEx;
 import com.svg.utils.SysCode;
 
@@ -59,6 +61,7 @@ public class FragmentHistoryData2 extends Fragment implements HistoryResponseLis
     private boolean showThreeOrTwo = true;
     private boolean isHidden = false;
     private boolean isPaused = false;
+    private LoginingAnimation loginingAnimation;
 
     @Nullable
     @Override
@@ -69,11 +72,7 @@ public class FragmentHistoryData2 extends Fragment implements HistoryResponseLis
         init(view);
 
         // 获取数据
-        if(showThreeOrTwo) {
-            initDataABC(A1,A2,B1,B2,C1,C2);
-        } else {
-            initData(start1, start2, after1, after2);
-        }
+        startGetInfo();
 
         return view;
     }
@@ -85,6 +84,7 @@ public class FragmentHistoryData2 extends Fragment implements HistoryResponseLis
     private void init(View view){
         responseListner = this;
         handler = new Handler(this);
+        loginingAnimation = new LoginingAnimation(getContext());
 
         // 2450
 //        start1 = 0x09;
@@ -181,13 +181,23 @@ public class FragmentHistoryData2 extends Fragment implements HistoryResponseLis
                         break;
                 }
                 // 获取数据
-                if(showThreeOrTwo) {
-                    initDataABC(A1,A2,B1,B2,C1,C2);
-                } else {
-                    initData(start1, start2, after1, after2);
-                }
+                startGetInfo();
             }
         });
+    }
+
+    /**
+     * 获取数据
+     */
+    private void startGetInfo(){
+        if(null != loginingAnimation) {
+            loginingAnimation.showLoading();
+        }
+        if(showThreeOrTwo) {
+            initDataABC(A1,A2,B1,B2,C1,C2);
+        } else {
+            initData(start1, start2, after1, after2);
+        }
     }
 
     /**
@@ -253,6 +263,13 @@ public class FragmentHistoryData2 extends Fragment implements HistoryResponseLis
     }
 
     @Override
+    public void failedResponse() {
+        Message message = new Message();
+        message.what = 842;
+        handler.sendMessageDelayed(message, 3000);
+    }
+
+    @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what){
             case 3002:
@@ -261,10 +278,18 @@ public class FragmentHistoryData2 extends Fragment implements HistoryResponseLis
                 map = (Map<String, byte[]>)msg.obj;
                 if(showThreeOrTwo) {
                     SetLineChart.setLineDataABC(getContext(), lineChart, map.get("data1"), map.get("data2"),
-                            map.get("data3"), danwei, SysCode.HISTYORY_MONTH, length);
+                            map.get("data3"), danwei, SysCode.HISTYORY_MONTH, length, loginingAnimation);
                 } else {
                     SetLineChart.setLineData(getContext(), lineChart, map.get("data1"), map.get("data2"),
-                            danwei, SysCode.HISTYORY_MONTH, length);
+                            danwei, SysCode.HISTYORY_MONTH, length, loginingAnimation);
+                }
+                break;
+            case 842:
+                if(null != loginingAnimation && loginingAnimation.isShowed()) {
+                    loginingAnimation.dismissLoading();
+                }
+                if(CommUtil.isNetworkConnected(getContext())) {
+                    CommUtil.showToast(getContext(), "数据刷新失败");
                 }
                 break;
         }
@@ -276,11 +301,7 @@ public class FragmentHistoryData2 extends Fragment implements HistoryResponseLis
         super.onHiddenChanged(hidden);
         isHidden = hidden;
         if(!hidden){
-            if(showThreeOrTwo) {
-                initDataABC(A1,A2,B1,B2,C1,C2);
-            } else {
-                initData(start1, start2, after1, after2);
-            }
+            startGetInfo();
         } else {
             if(null != handler) {
                 handler.removeMessages(3002);
@@ -294,11 +315,7 @@ public class FragmentHistoryData2 extends Fragment implements HistoryResponseLis
         // 开屏时，判断如果是在当前界面又是刚从关屏状态过来，就继续定时更新
         if(!isHidden && isPaused) {
             isPaused = false;
-            if(showThreeOrTwo) {
-                initDataABC(A1,A2,B1,B2,C1,C2);
-            } else {
-                initData(start1, start2, after1, after2);
-            }
+            startGetInfo();
         }
     }
 
