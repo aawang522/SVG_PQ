@@ -290,11 +290,6 @@ public class FragmentHistoryData1 extends Fragment implements HistoryResponseLis
                     CommUtil.showToast(getContext(), "数据刷新失败");
                 }
                 break;
-            case 941:
-                if(null != loginingAnimation && loginingAnimation.isShowed()){
-                    loginingAnimation.dismissLoading();
-                }
-                break;
         }
         return false;
     }

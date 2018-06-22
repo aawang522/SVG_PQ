@@ -411,11 +411,11 @@ public class FragmentYaotiaoData2_1 extends Fragment implements ModbusResponseLi
                 int dataLength = buffer1[2] / 4;
                 // 根据数据的个数，一一展示在textview中
                 for (int i = 0; i < dataLength; i++) {
-                    short[] shorts = new short[4];
-                    shorts[0] = (short) (0x00FF & buffer1[4 * i + 3]);
-                    shorts[1] = (short) (0x00FF & buffer1[4 * i + 3 + 1]);
-                    shorts[2] = (short) (0x00FF & buffer1[4 * i + 3 + 2]);
-                    shorts[3] = (short) (0x00FF & buffer1[4 * i + 3 + 3]);
+                    int[] shorts = new int[4];
+                    shorts[0] = 0x00FF & buffer1[4 * i + 3];
+                    shorts[1] = 0x00FF & buffer1[4 * i + 3 + 1];
+                    shorts[2] = 0x00FF & buffer1[4 * i + 3 + 2];
+                    shorts[3] = 0x00FF & buffer1[4 * i + 3 + 3];
 
                     // 第0位是32位浮点数，额定电流
                     if (i == 0) {
@@ -448,11 +448,11 @@ public class FragmentYaotiaoData2_1 extends Fragment implements ModbusResponseLi
                 int dataLength = buffer2[2] / 4;
                 // 根据数据的个数，一一展示在textview中
                 for (int i = 0; i < dataLength; i++) {
-                    short[] shorts = new short[4];
-                    shorts[0] = (short) (0x00FF & buffer2[4 * i + 3]);
-                    shorts[1] = (short) (0x00FF & buffer2[4 * i + 3 + 1]);
-                    shorts[2] = (short) (0x00FF & buffer2[4 * i + 3 + 2]);
-                    shorts[3] = (short) (0x00FF & buffer2[4 * i + 3 + 3]);
+                    int[] shorts = new int[4];
+                    shorts[0] = 0x00FF & buffer2[4 * i + 3];
+                    shorts[1] = 0x00FF & buffer2[4 * i + 3 + 1];
+                    shorts[2] = 0x00FF & buffer2[4 * i + 3 + 2];
+                    shorts[3] = 0x00FF & buffer2[4 * i + 3 + 3];
 
                     // 第0位是32位浮点数，运行模式
                     if (i == 0) {
@@ -482,11 +482,10 @@ public class FragmentYaotiaoData2_1 extends Fragment implements ModbusResponseLi
                 int dataLength3 = buffer3[2] / 2;
                 // 根据数据的个数，一一展示在textview中
                 for (int i = 0; i < dataLength3; i++) {
-                    byte[] data1Byte = new byte[2];
-                    // 从第17位开始计算
-                    data1Byte[1] = buffer3[2 * i + 3];
-                    data1Byte[0] = buffer3[2 * i + 3 + 1];
-                    int b = data1Byte[1] * 0x10 + data1Byte[0];
+                    int[] shorts2 = new int[2];
+                    shorts2[0] = 0x00FF & buffer3[2 * i + 3];
+                    shorts2[1] = 0x00FF & buffer3[2 * i + 3 + 1];
+                    long b = shorts2[0]*0x100 +shorts2[1];
                     textList.get(i).setText(String.valueOf(b));
                 }
             }

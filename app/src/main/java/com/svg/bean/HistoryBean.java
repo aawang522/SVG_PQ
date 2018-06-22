@@ -1,5 +1,6 @@
 package com.svg.bean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -7,12 +8,12 @@ import java.util.List;
  */
 
 public class HistoryBean {
-    private int year;
-    private int month;
-    private int day;
-    private int hour;
-    private int minute;
-    private List<Float> datas;
+    private int year = 0;
+    private int month = 0;
+    private int day = 0;
+    private int hour = 0;
+    private int minute = 0;
+    private List<Float> datas = new ArrayList<>();
 
     public HistoryBean() {
     }

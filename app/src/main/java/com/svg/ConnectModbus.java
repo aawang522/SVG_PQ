@@ -502,25 +502,27 @@ public class ConnectModbus {
         //  && 0<buffer1[2]
         if(null != buffer1 && 5 < buffer1.length) {
             // buffer1的第2个字节就是返回数据的长度，加上5就是整体返回报文的长度
-            short[] shorts = new short[1];
-            shorts[0] = (short) (0x00FF & buffer1[2]);
+            int[] shorts = new int[1];
+            shorts[0] = 0x00FF & buffer1[2];
             int reactLength = shorts[0] + 5;
-            // 为了计算crc，先将buffer1除去crc的长度赋给buffer2
-            byte buffer2[] = new byte[reactLength - 2];
-            // 先将buffer1的前面赋值给buffer2，便于计算crc
-            for (int i = 0; i < reactLength - 2; i++) {
-                buffer2[i] = buffer1[i];
-            }
+            if(2 < reactLength) {
+                // 为了计算crc，先将buffer1除去crc的长度赋给buffer2
+                byte buffer2[] = new byte[reactLength - 2];
+                // 先将buffer1的前面赋值给buffer2，便于计算crc
+                for (int i = 0; i < reactLength - 2; i++) {
+                    buffer2[i] = buffer1[i];
+                }
 
-            // 首先crc校验
-            // 先根据前面的报文计算出crc
-            String crcStr = getCRC(buffer2);
-            // 如果crc计算出来是3位，比如a56，则在前面补0
-            // 然后将计算出来的crc放在byte[]中
-            byte[] byte2 = hexStringToBytes(crcStr);
-            // 对比crc是否正确，高字节对比前一个，低字节对比后一个，crc正确，则开始解析数据
-            if (buffer1[reactLength - 2] == byte2[1] && buffer1[reactLength - 1] == byte2[0]) {
-                return true;
+                // 首先crc校验
+                // 先根据前面的报文计算出crc
+                String crcStr = getCRC(buffer2);
+                // 如果crc计算出来是3位，比如a56，则在前面补0
+                // 然后将计算出来的crc放在byte[]中
+                byte[] byte2 = hexStringToBytes(crcStr);
+                // 对比crc是否正确，高字节对比前一个，低字节对比后一个，crc正确，则开始解析数据
+                if (2 <= byte2.length && (buffer1[reactLength - 2] == byte2[1] && buffer1[reactLength - 1] == byte2[0])) {
+                    return true;
+                }
             }
         }
         return false;
@@ -536,7 +538,7 @@ public class ConnectModbus {
 //            shorts[0] = (short) (0x00FF & buffer1[2]);
             int reactLength = returnActualLength(buffer1);
             // 为了计算crc，先将buffer1除去crc的长度赋给buffer2
-            if(reactLength > 2) {
+            if(2 < reactLength) {
                 byte buffer2[] = new byte[reactLength - 2];
                 // 先将buffer1的前面赋值给buffer2，便于计算crc
                 for (int i = 0; i < reactLength - 2; i++) {
@@ -550,7 +552,7 @@ public class ConnectModbus {
                 // 然后将计算出来的crc放在byte[]中
                 byte[] byte2 = hexStringToBytes(crcStr);
                 // 对比crc是否正确，高字节对比前一个，低字节对比后一个，crc正确，则开始解析数据
-                if (buffer1[reactLength - 2] == byte2[1] && buffer1[reactLength - 1] == byte2[0]) {
+                if (2 <= byte2.length && (buffer1[reactLength - 2] == byte2[1] && buffer1[reactLength - 1] == byte2[0])) {
                     return reactLength;
                 }
             } else {
@@ -580,8 +582,8 @@ public class ConnectModbus {
         if(checkReturnCRC(buffer1)) {
             List<Float> dataList = new ArrayList<>();
             // 返回数据的长度
-            short[] shorts = new short[1];
-            shorts[0] = (short) (0x00FF & buffer1[2]);
+            int[] shorts = new int[1];
+            shorts[0] = 0x00FF & buffer1[2];
             int dataLength = shorts[0] / 4;
             // 根据数据的个数，一一展示在textview中
             for (int i = 0; i < dataLength; i++) {
@@ -612,11 +614,11 @@ public class ConnectModbus {
             int dataLength = buffer1[2] / 4;
             // 根据数据的个数，一一展示在textview中
             for (int i = 0; i < dataLength; i++) {
-                short[] shorts = new short[4];
-                shorts[0] = (short) (0x00FF & buffer1[4 * i + 3]);
-                shorts[1] = (short) (0x00FF & buffer1[4 * i + 3 + 1]);
-                shorts[2] = (short) (0x00FF & buffer1[4 * i + 3 + 2]);
-                shorts[3] = (short) (0x00FF & buffer1[4 * i + 3 + 3]);
+                int[] shorts = new int[4];
+                shorts[0] = 0x00FF & buffer1[4 * i + 3];
+                shorts[1] = 0x00FF & buffer1[4 * i + 3 + 1];
+                shorts[2] = 0x00FF & buffer1[4 * i + 3 + 2];
+                shorts[3] = 0x00FF & buffer1[4 * i + 3 + 3];
 
                 // 第1、3、8、11是32位无符号数
                 if(i == 1 || i == 3 || i == 8 || i ==11) {
@@ -666,11 +668,11 @@ public class ConnectModbus {
             int dataLength = buffer1[2] / 4;
             // 根据数据的个数，一一展示在textview中
             for (int i = 0; i < dataLength; i++) {
-                short[] shorts = new short[4];
-                shorts[0] = (short) (0x00FF & buffer1[4 * i + 3]);
-                shorts[1] = (short) (0x00FF & buffer1[4 * i + 3 + 1]);
-                shorts[2] = (short) (0x00FF & buffer1[4 * i + 3 + 2]);
-                shorts[3] = (short) (0x00FF & buffer1[4 * i + 3 + 3]);
+                int[] shorts = new int[4];
+                shorts[0] = 0x00FF & buffer1[4 * i + 3];
+                shorts[1] = 0x00FF & buffer1[4 * i + 3 + 1];
+                shorts[2] = 0x00FF & buffer1[4 * i + 3 + 2];
+                shorts[3] = 0x00FF & buffer1[4 * i + 3 + 3];
 
                 // 如果是最后一位，则是32位无符号数
                 if(i == dataLength-1) {
@@ -702,11 +704,11 @@ public class ConnectModbus {
             int dataLength = buffer1[2] / 4;
             // 根据数据的个数，一一展示在textview中
             for (int i = 0; i < dataLength; i++) {
-                short[] shorts = new short[4];
-                shorts[0] = (short) (0x00FF & buffer1[4 * i + 3]);
-                shorts[1] = (short) (0x00FF & buffer1[4 * i + 3 + 1]);
-                shorts[2] = (short) (0x00FF & buffer1[4 * i + 3 + 2]);
-                shorts[3] = (short) (0x00FF & buffer1[4 * i + 3 + 3]);
+                int[] shorts = new int[4];
+                shorts[0] = 0x00FF & buffer1[4 * i + 3];
+                shorts[1] = 0x00FF & buffer1[4 * i + 3 + 1];
+                shorts[2] = 0x00FF & buffer1[4 * i + 3 + 2];
+                shorts[3] = 0x00FF & buffer1[4 * i + 3 + 3];
 
                 long a = shorts[0] *0x1000000 +shorts[1]*0x10000  + shorts[2]*0x100 +shorts[3];
                 dataList.add(a);
@@ -727,11 +729,11 @@ public class ConnectModbus {
             int dataLength = buffer1[2] / 4;
             // 根据数据的个数，一一展示在textview中
             for (int i = 0; i < dataLength; i++) {
-                short[] shorts = new short[4];
-                shorts[0] = (short) (0x00FF & buffer1[4 * i + 3]);
-                shorts[1] = (short) (0x00FF & buffer1[4 * i + 3 + 1]);
-                shorts[2] = (short) (0x00FF & buffer1[4 * i + 3 + 2]);
-                shorts[3] = (short) (0x00FF & buffer1[4 * i + 3 + 3]);
+                int[] shorts = new int[4];
+                shorts[0] = 0x00FF & buffer1[4 * i + 3];
+                shorts[1] = 0x00FF & buffer1[4 * i + 3 + 1];
+                shorts[2] = 0x00FF & buffer1[4 * i + 3 + 2];
+                shorts[3] = 0x00FF & buffer1[4 * i + 3 + 3];
 
                 // 如果是第10位、第13位和第14位，则是32位浮点数
                 if(i == 10 || i == 13 || i == 14) {
@@ -1250,26 +1252,26 @@ public class ConnectModbus {
     public static HistoryBean from32_Lishi(byte[] buffer1, String type, byte length){
         // 得到的数据：2018  3  50.012512  51.012512  52...  53...  54... .... 62.012512
         int reactLength = checkHistoryCRC(buffer1);
-        if(5 < reactLength) {
+        if(null != buffer1 && 5 < reactLength) {
             HistoryBean historyBean = new HistoryBean();
             List<Float> dataList = new ArrayList<>();
             // 返回数据的长度
             int dataLength = (reactLength-5) / 4;
-            if(SysCode.HISTYORY_YEAR.equals(type)){
+            if(SysCode.HISTYORY_YEAR.equals(type) && 15< buffer1.length && 2 < dataLength){
                 // 年
-                short[] data1Byte = new short[4];
-                data1Byte[3] = (short) (0x00FF & buffer1[3]);
-                data1Byte[2] = (short) (0x00FF & buffer1[4]);
-                data1Byte[1] = (short) (0x00FF & buffer1[5]);
-                data1Byte[0] = (short) (0x00FF & buffer1[6]);
+                int[] data1Byte = new int[4];
+                data1Byte[3] = 0x00FF & buffer1[3];
+                data1Byte[2] = 0x00FF & buffer1[4];
+                data1Byte[1] = 0x00FF & buffer1[5];
+                data1Byte[0] = 0x00FF & buffer1[6];
                 int year = data1Byte[3] *0x1000000 +data1Byte[2]*0x10000  + data1Byte[1]*0x100 +data1Byte[0];
                 historyBean.setYear(year);
                 // 月
-                short[] data2Byte = new short[4];
-                data2Byte[3] = (short) (0x00FF & buffer1[7]);
-                data2Byte[2] = (short) (0x00FF & buffer1[8]);
-                data2Byte[1] = (short) (0x00FF & buffer1[9]);
-                data2Byte[0] = (short) (0x00FF & buffer1[10]);
+                int[] data2Byte = new int[4];
+                data2Byte[3] = 0x00FF & buffer1[7];
+                data2Byte[2] = 0x00FF & buffer1[8];
+                data2Byte[1] = 0x00FF & buffer1[9];
+                data2Byte[0] = 0x00FF & buffer1[10];
                 int month = data2Byte[3] *0x1000000 +data2Byte[2]*0x10000  + data2Byte[1]*0x100 +data2Byte[0];
                 historyBean.setMonth(month);
                 for (int i = 0; i < dataLength-2; i++) {
@@ -1286,29 +1288,29 @@ public class ConnectModbus {
                     dataList.add(data);
                 }
                 historyBean.setDatas(dataList);
-            } else if (SysCode.HISTYORY_MONTH.equals(type)){
+            } else if (SysCode.HISTYORY_MONTH.equals(type) && 19 < buffer1.length && 3 < dataLength){
                 // 年
-                short[] data1Byte = new short[4];
-                data1Byte[3] = (short) (0x00FF & buffer1[3]);
-                data1Byte[2] = (short) (0x00FF & buffer1[4]);
-                data1Byte[1] = (short) (0x00FF & buffer1[5]);
-                data1Byte[0] = (short) (0x00FF & buffer1[6]);
+                int[] data1Byte = new int[4];
+                data1Byte[3] = 0x00FF & buffer1[3];
+                data1Byte[2] = 0x00FF & buffer1[4];
+                data1Byte[1] = 0x00FF & buffer1[5];
+                data1Byte[0] = 0x00FF & buffer1[6];
                 int year = data1Byte[3] *0x1000000 +data1Byte[2]*0x10000  + data1Byte[1]*0x100 +data1Byte[0];
                 historyBean.setYear(year);
                 // 月
-                short[] data2Byte = new short[4];
-                data2Byte[3] = (short) (0x00FF & buffer1[7]);
-                data2Byte[2] = (short) (0x00FF & buffer1[8]);
-                data2Byte[1] = (short) (0x00FF & buffer1[9]);
-                data2Byte[0] = (short) (0x00FF & buffer1[10]);
+                int[] data2Byte = new int[4];
+                data2Byte[3] = 0x00FF & buffer1[7];
+                data2Byte[2] = 0x00FF & buffer1[8];
+                data2Byte[1] = 0x00FF & buffer1[9];
+                data2Byte[0] = 0x00FF & buffer1[10];
                 int month = data2Byte[3] *0x1000000 +data2Byte[2]*0x10000  + data2Byte[1]*0x100 +data2Byte[0];
                 historyBean.setMonth(month);
                 // 日
-                short[] data3Byte = new short[4];
-                data3Byte[3] = (short) (0x00FF & buffer1[11]);
-                data3Byte[2] = (short) (0x00FF & buffer1[12]);
-                data3Byte[1] = (short) (0x00FF & buffer1[13]);
-                data3Byte[0] = (short) (0x00FF & buffer1[14]);
+                int[] data3Byte = new int[4];
+                data3Byte[3] = 0x00FF & buffer1[11];
+                data3Byte[2] = 0x00FF & buffer1[12];
+                data3Byte[1] = 0x00FF & buffer1[13];
+                data3Byte[0] = 0x00FF & buffer1[14];
                 int day = data3Byte[3] *0x1000000 +data3Byte[2]*0x10000  + data3Byte[1]*0x100 +data3Byte[0];
                 historyBean.setDay(day);
                 for (int i = 0; i < dataLength-3; i++) {
@@ -1325,53 +1327,53 @@ public class ConnectModbus {
                     dataList.add(data);
                 }
                 historyBean.setDatas(dataList);
-            }  else if (SysCode.HISTYORY_DAY.equals(type)){
+            }  else if (SysCode.HISTYORY_DAY.equals(type) && 30 < buffer1.length && 5 < dataLength){
                 // 年
-                short[] data1Byte = new short[4];
-                data1Byte[3] = (short) (0x00FF & buffer1[3]);
-                data1Byte[2] = (short) (0x00FF & buffer1[4]);
-                data1Byte[1] = (short) (0x00FF & buffer1[5]);
-                data1Byte[0] = (short) (0x00FF & buffer1[6]);
+                int[] data1Byte = new int[4];
+                data1Byte[3] = 0x00FF & buffer1[3];
+                data1Byte[2] = 0x00FF & buffer1[4];
+                data1Byte[1] = 0x00FF & buffer1[5];
+                data1Byte[0] = 0x00FF & buffer1[6];
                 int year = data1Byte[3] *0x1000000 +data1Byte[2]*0x10000  + data1Byte[1]*0x100 +data1Byte[0];
                 historyBean.setYear(year);
                 // 月
-                short[] data2Byte = new short[4];
-                data2Byte[3] = (short) (0x00FF & buffer1[7]);
-                data2Byte[2] = (short) (0x00FF & buffer1[8]);
-                data2Byte[1] = (short) (0x00FF & buffer1[9]);
-                data2Byte[0] = (short) (0x00FF & buffer1[10]);
+                int[] data2Byte = new int[4];
+                data2Byte[3] = 0x00FF & buffer1[7];
+                data2Byte[2] = 0x00FF & buffer1[8];
+                data2Byte[1] = 0x00FF & buffer1[9];
+                data2Byte[0] = 0x00FF & buffer1[10];
                 int month = data2Byte[3] *0x1000000 +data2Byte[2]*0x10000  + data2Byte[1]*0x100 +data2Byte[0];
                 historyBean.setMonth(month);
                 // 日
-                short[] data3Byte = new short[4];
-                data3Byte[3] = (short) (0x00FF & buffer1[11]);
-                data3Byte[2] = (short) (0x00FF & buffer1[12]);
-                data3Byte[1] = (short) (0x00FF & buffer1[13]);
-                data3Byte[0] = (short) (0x00FF & buffer1[14]);
+                int[] data3Byte = new int[4];
+                data3Byte[3] = 0x00FF & buffer1[11];
+                data3Byte[2] = 0x00FF & buffer1[12];
+                data3Byte[1] = 0x00FF & buffer1[13];
+                data3Byte[0] = 0x00FF & buffer1[14];
                 int day = data3Byte[3] *0x1000000 +data3Byte[2]*0x10000  + data3Byte[1]*0x100 +data3Byte[0];
                 historyBean.setDay(day);
                 // 时
-                short[] data4Byte = new short[4];
-                data4Byte[3] = (short) (0x00FF & buffer1[15]);
-                data4Byte[2] = (short) (0x00FF & buffer1[16]);
-                data4Byte[1] = (short) (0x00FF & buffer1[17]);
-                data4Byte[0] = (short) (0x00FF & buffer1[18]);
+                int[] data4Byte = new int[4];
+                data4Byte[3] = 0x00FF & buffer1[15];
+                data4Byte[2] = 0x00FF & buffer1[16];
+                data4Byte[1] = 0x00FF & buffer1[17];
+                data4Byte[0] = 0x00FF & buffer1[18];
                 int hour = data4Byte[3] *0x1000000 +data4Byte[2]*0x10000  + data4Byte[1]*0x100 +data4Byte[0];
                 historyBean.setHour(hour);
-                // 日
-                short[] data5Byte = new short[4];
-                data5Byte[3] = (short) (0x00FF & buffer1[19]);
-                data5Byte[2] = (short) (0x00FF & buffer1[20]);
-                data5Byte[1] = (short) (0x00FF & buffer1[21]);
-                data5Byte[0] = (short) (0x00FF & buffer1[22]);
+                // 分
+                int[] data5Byte = new int[4];
+                data5Byte[3] = 0x00FF & buffer1[19];
+                data5Byte[2] = 0x00FF & buffer1[20];
+                data5Byte[1] = 0x00FF & buffer1[21];
+                data5Byte[0] = 0x00FF & buffer1[22];
                 int minute = data5Byte[3] *0x1000000 +data5Byte[2]*0x10000  + data5Byte[1]*0x100 +data5Byte[0];
                 historyBean.setMinute(minute);
                 for (int i = 0; i < dataLength-5; i++) {
                     byte[] dataByte = new byte[4];
                     dataByte[0] = buffer1[4 * i + 23];
-                    dataByte[1] = buffer1[4 * i + 24 + 1];
-                    dataByte[2] = buffer1[4 * i + 25 + 2];
-                    dataByte[3] = buffer1[4 * i + 26 + 3];
+                    dataByte[1] = buffer1[4 * i + 23 + 1];
+                    dataByte[2] = buffer1[4 * i + 23 + 2];
+                    dataByte[3] = buffer1[4 * i + 23 + 3];
 
                     // 将10进制转换成16进制
                     StringBuilder dataStr = bytesToHexFun3(dataByte);
@@ -1415,7 +1417,7 @@ public class ConnectModbus {
      * @return byte[]
      */
     public static byte[] hexStringToBytes(String hexString) {
-        if (hexString == null || hexString.equals("")) {
+        if (null == hexString || hexString.equals("")) {
             return null;
         }
         hexString = hexString.toUpperCase();
@@ -1457,9 +1459,9 @@ public class ConnectModbus {
      * @param bytes
      * @return
      */
-    public static StringBuilder bytesToHexFun3(short[] bytes) {
+    public static StringBuilder bytesToHexFun3(int[] bytes) {
         StringBuilder buf = new StringBuilder(bytes.length * 2);
-        for(short b : bytes) { // 使用String的format方法进行转换
+        for(int b : bytes) { // 使用String的format方法进行转换
             buf.append(String.format("%02x", new Integer(b & 0xff)));
         }
         return buf;
