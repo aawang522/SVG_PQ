@@ -34,6 +34,7 @@ public class SetLineChart {
     static int currentMonth = 0;
     static int currentDay = 0;
     static int currentHour = 0;
+    static int currentMinute = 0;
     static int currentMonthDays = 0;
     static int lastMonthDays = 0;
     /**
@@ -54,6 +55,7 @@ public class SetLineChart {
             currentMonth = historyBean1.getMonth();
             currentDay = historyBean1.getDay();
             currentHour = historyBean1.getHour();
+            currentMinute = historyBean1.getMinute();
             // 计算当月天数和上一个月天数
             setCurrentData();
             dataList1 = historyBean1.getDatas();
@@ -109,6 +111,7 @@ public class SetLineChart {
             currentMonth = historyBean1.getMonth();
             currentDay = historyBean1.getDay();
             currentHour = historyBean1.getHour();
+            currentMinute = historyBean1.getMinute();
             // 计算当月天数和上一个月天数
             setCurrentData();
             dataList1 = historyBean1.getDatas();
@@ -357,57 +360,8 @@ public class SetLineChart {
                 new IAxisValueFormatter() {
                     @Override
                     public String getFormattedValue(float value, AxisBase axis) {
-                        if(SysCode.HISTYORY_YEAR.equals(type)) {
-                            value = currentMonth + value;
-                        } else if(SysCode.HISTYORY_MONTH.equals(type)){
-                            if(31 == currentMonthDays && 31 == currentDay) {
-                                value = value + 1;
-                            } else {
-                                value = currentDay + value + (lastMonthDays - 30);
-                            }
-                        } else {
-                            value = currentHour + value/4;
-                        }
-                        String monthStr = mFormat.format(value);
-                        if (SysCode.HISTYORY_YEAR.equals(type)) {
-                            if (value % 2 == 0) {
-                                if (value > 12.0f) {
-                                    return mFormat.format(value - 12.0f) + "月";
-                                } else {
-                                    return monthStr + "月";
-                                }
-                            } else {
-                                return "";
-                            }
-                        } else if(SysCode.HISTYORY_MONTH.equals(type)) {
-                            if (value % 2 == 0) {
-                                if(31 == currentMonthDays && 31 == currentDay){
-                                    return monthStr + "日";
-                                }
-                                else if (value > lastMonthDays) {
-                                    return mFormat.format(value - lastMonthDays) + "日";
-                                } else {
-                                    if(-1 >= value){
-                                        return "30日";
-                                    } else if(0 == value){
-                                        return "31日";
-                                    }
-                                    return monthStr + "日";
-                                }
-                            } else {
-                                return "";
-                            }
-                        } else {
-                            if (value % 2 == 0) {
-                                if (value > 24.0f) {
-                                    return mFormat.format(value - 24.0f) + "时";
-                                } else {
-                                    return mFormat.format(value) + "时";
-                                }
-                            } else {
-                                return "";
-                            }
-                        }
+                        // 设置横坐标参数
+                        return setFormattedValue(value, type, mFormat);
                     }
                 },
                 new IAxisValueFormatter() {
@@ -489,57 +443,8 @@ public class SetLineChart {
                 new IAxisValueFormatter() {
                     @Override
                     public String getFormattedValue(float value, AxisBase axis) {
-                        if(SysCode.HISTYORY_YEAR.equals(type)) {
-                            value = currentMonth + value;
-                        } else if(SysCode.HISTYORY_MONTH.equals(type)){
-                            if(31 == currentMonthDays && 31 == currentDay) {
-                                value = value + 1;
-                            } else {
-                                value = currentDay + value + (lastMonthDays - 30);
-                            }
-                        } else {
-                            value = currentHour + value/4;
-                        }
-                        String monthStr = mFormat.format(value);
-                        if (SysCode.HISTYORY_YEAR.equals(type)) {
-                            if (value % 2 == 0) {
-                                if (value > 12.0f) {
-                                    return mFormat.format(value - 12.0f) + "月";
-                                } else {
-                                    return monthStr + "月";
-                                }
-                            } else {
-                                return "";
-                            }
-                        } else if(SysCode.HISTYORY_MONTH.equals(type)) {
-                            if (value % 2 == 0) {
-                                if(31 == currentMonthDays && 31 == currentDay){
-                                    return monthStr + "日";
-                                }
-                                else if (value > lastMonthDays) {
-                                    return mFormat.format(value - lastMonthDays) + "日";
-                                } else {
-                                    if(-1 >= value){
-                                        return "30日";
-                                    } else if(0 == value){
-                                        return "31日";
-                                    }
-                                    return monthStr + "日";
-                                }
-                            } else {
-                                return "";
-                            }
-                        } else {
-                            if (value % 2 == 0) {
-                                if (value > 24.0f) {
-                                    return mFormat.format(value - 24.0f) + "时";
-                                } else {
-                                    return mFormat.format(value) + "时";
-                                }
-                            } else {
-                                return "";
-                            }
-                        }
+                        // 设置横坐标参数
+                        return setFormattedValue(value, type, mFormat);
                     }
                 },
                 new IAxisValueFormatter() {
@@ -627,6 +532,67 @@ public class SetLineChart {
     }
 
     /**
+     * 设置横坐标参数
+     * @param value
+     * @param type
+     * @param mFormat
+     * @return
+     */
+    private static String setFormattedValue(float value, String type, Format mFormat) {
+        if(SysCode.HISTYORY_YEAR.equals(type)) {
+            value = currentMonth + value;
+        } else if(SysCode.HISTYORY_MONTH.equals(type)){
+            if(31 == currentMonthDays && 31 == currentDay) {
+                value = value + 1;
+            } else {
+                value = currentDay + value + (lastMonthDays - 30);
+            }
+        } else {
+            value = (currentHour-1) + (value+currentMinute/15+1)/4;
+        }
+        String monthStr = mFormat.format(value);
+        if (SysCode.HISTYORY_YEAR.equals(type)) {
+            if (value % 2 == 0) {
+                if (value > 12.0f) {
+                    return mFormat.format(value - 12.0f) + "月";
+                } else {
+                    return monthStr + "月";
+                }
+            } else {
+                return "";
+            }
+        } else if(SysCode.HISTYORY_MONTH.equals(type)) {
+            if (value % 2 == 0) {
+                if(31 == currentMonthDays && 31 == currentDay){
+                    return monthStr + "日";
+                }
+                else if (value > lastMonthDays) {
+                    return mFormat.format(value - lastMonthDays) + "日";
+                } else {
+                    if(-1 >= value){
+                        return "30日";
+                    } else if(0 == value){
+                        return "31日";
+                    }
+                    return monthStr + "日";
+                }
+            } else {
+                return "";
+            }
+        } else {
+            if (value % 2 == 0) {
+                if (value > 24.0f) {
+                    return mFormat.format(value - 24.0f) + "时";
+                } else {
+                    return mFormat.format(value) + "时";
+                }
+            } else {
+                return "";
+            }
+        }
+    }
+
+    /**
      * 点的信息展示
      * @param index
      * @param type
@@ -640,6 +606,8 @@ public class SetLineChart {
     private static StringBuffer setPointData(int index, String type, String danwei, Format mFormat,
                                              List<YoyListEntity> AList, List<YoyListEntity> BList, List<YoyListEntity> CList){
         int time = 0;
+        int minute = 0;
+        String minuteStr = "";
         if(SysCode.HISTYORY_YEAR.equals(type)) {
             time = currentMonth + index;
         } else if(SysCode.HISTYORY_MONTH.equals(type)){
@@ -649,7 +617,13 @@ public class SetLineChart {
                 time = currentDay + index + (lastMonthDays - 30);
             }
         } else {
-            time = currentHour + index/4;
+            time = (currentHour-1) + (index+currentMinute/15+1)/4;
+            minute = (index+currentMinute/15+1)%4 * 15;
+            if(0 == minute){
+                minuteStr = "00";
+            } else {
+                minuteStr = String.valueOf(minute);
+            }
         }
 
         String Aname = "";
@@ -784,33 +758,33 @@ public class SetLineChart {
             if (null != AList && index < AList.size()) {
                 textTemp.append(Aname).append(":");
                 if (24.0f >= time) {
-                    textTemp.append("昨日").append(time).append("时 ");
+                    textTemp.append("昨日").append(time).append(":").append(minuteStr);
                 } else {
-                    textTemp.append("今日").append(mFormat.format((time-24.0f))).append("时 ");
+                    textTemp.append("今日").append(mFormat.format((time-24.0f))).append(":").append(minuteStr);
                 }
-                textTemp.append(Adata).append(danwei);
+                textTemp.append(" ").append(Adata).append(danwei);
             }
 
             if (null != BList && index < BList.size()) {
                 textTemp.append("\n");
                 textTemp.append(Bname).append(":");
                 if (24.0f >= time) {
-                    textTemp.append("昨日").append(time).append("时 ");
+                    textTemp.append("昨日").append(time).append(":").append(minuteStr);
                 } else {
-                    textTemp.append("今日").append(mFormat.format((time-24.0f))).append("时 ");
+                    textTemp.append("今日").append(mFormat.format((time-24.0f))).append(":").append(minuteStr);
                 }
-                textTemp.append(Bdata).append(danwei);
+                textTemp.append(" ").append(Bdata).append(danwei);
             }
 
             if (null != CList && index < CList.size()) {
                 textTemp.append("\n");
                 textTemp.append(Cname).append(":");
                 if (24.0f >= time) {
-                    textTemp.append("昨日").append(time).append("时 ");
+                    textTemp.append("昨日").append(time).append(":").append(minuteStr);
                 } else {
-                    textTemp.append("今日").append(mFormat.format((time-24.0f))).append("时 ");
+                    textTemp.append("今日").append(mFormat.format((time-24.0f))).append(":").append(minuteStr);
                 }
-                textTemp.append(Cdata).append(danwei);
+                textTemp.append(" ").append(Cdata).append(danwei);
             }
         }
         return textTemp;

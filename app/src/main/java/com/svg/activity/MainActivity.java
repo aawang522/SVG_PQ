@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private void setDefaultInfo(){
         // tab标题栏添加文字
         mTitles.add("遥测");
-        mTitles.add("遥调");
+        mTitles.add("遥控");
         mTitles.add("事件");
         mTitles.add("实时状态");
         mTitles.add("历史曲线");
